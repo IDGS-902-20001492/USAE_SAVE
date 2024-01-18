@@ -1,0 +1,65 @@
+namespace save_apiv0.Models
+{
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("Usuario")]
+    public partial class Usuario
+    {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Usuario()
+        {
+            Historial = new HashSet<Historial>();
+            Vehiculo = new HashSet<Vehiculo>();
+        }
+
+        public int id { get; set; }
+
+        [Required]
+        [StringLength(255)]
+        public string nombre { get; set; }
+
+        [Required]
+        [StringLength(255)]
+        public string apePaterno { get; set; }
+
+        [Required]
+        [StringLength(255)]
+        public string apeMaterno { get; set; }
+
+        public int? edad { get; set; }
+
+        [Required]
+        [StringLength(255)]
+        public string email { get; set; }
+
+        [Required]
+        [StringLength(255)]
+        public string contrasena { get; set; }
+
+        [StringLength(255)]
+        public string gobierno { get; set; }
+
+        [StringLength(255)]
+        public string nivel { get; set; }
+
+        [StringLength(255)]
+        public string zona { get; set; }
+
+        [StringLength(255)]
+        public string centroTrabajo { get; set; }
+
+        public int permiso { get; set; }
+
+        public bool? estatus { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Historial> Historial { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Vehiculo> Vehiculo { get; set; }
+    }
+}

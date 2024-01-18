@@ -1,0 +1,85 @@
+import { useState } from "react";
+import "./Login.css";
+import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+
+export const Login = () => {
+
+    const [user, setUser] = useState({
+        email: "",
+        contrasena: ""
+    });
+
+    const handleInputChange = (e) => {
+        setUser({
+            ...user,
+            [e.target.name]: e.target.value
+        });
+    }
+
+    const getLogin = async () => {
+        try {
+            await fetch("/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(user)
+            }).catch((error) => {
+                console.log(error);
+            }).then((response) => {
+                if (response.status === 200) {
+                    window.location.href = "/users";
+                } else {
+                    mostrarSweetAlert("Error", "Verifique sus credenciales", "warning");
+                }
+            });
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const mostrarSweetAlert = (title, text, icon) => {
+        Swal.fire({
+            title,
+            text,
+            icon,
+            confirmButtonText: "Ok",
+        });
+    };
+
+    return (
+        <div className="container-fluid">
+            <div className="row grad justify-content-center align-items-center min-vh-100">
+                <div className="col-md-6">
+                    <div className="card">
+                        <div className="card-body">
+                            <h1 className="text-center">Iniciar Sesión</h1>
+                            <br />
+                            {/*Comienza el formulario*/}
+                            <div className="mb-3">
+                                <label htmlFor="email" className="form-label">Correo electrónico</label>
+                                <input type="email" className="form-control" id="email"
+                                    onChange={handleInputChange} name="email" placeholder="Correo electrónico" />
+                            </div>
+                            <div className="mb-3">
+                                <label htmlFor="password" className="form-label">Contraseña</label>
+                                <input type="password" className="form-control" id="password"
+                                    onChange={handleInputChange} name="contrasena" placeholder="Contraseña" />
+                            </div>
+                            <div className="d-grid">
+                                <button onClick={getLogin} className="btn btn-primary btn-lg">Iniciar Sesión</button>
+                            </div>
+
+
+                            <div className="mt-1">
+                                <Link to="/register">¿No tienes cuenta? Regístrate</Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
