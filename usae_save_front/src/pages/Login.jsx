@@ -31,7 +31,12 @@ export const Login = () => {
                 if (response.status === 200) {
                     window.location.href = "/users";
                 } else {
-                    mostrarSweetAlert("Error", "Verifique sus credenciales", "warning");
+                    //Si el error es 401, entonces el usuario no está registrado
+                    if (response.status === 401) {
+                        mostrarSweetAlert("Error", "El usuario no está registrado", "error");
+                    } else {
+                        mostrarSweetAlert("Advertencia", "Servidor desconectado", "warning");
+                    }
                 }
             });
 

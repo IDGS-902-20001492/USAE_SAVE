@@ -36,6 +36,29 @@ namespace save_apiv0.Controllers
             return Ok(usuario);
         }
 
+        // GET: api/Usuarios/Search?query={cadena}
+        [HttpGet]
+        [Route("api/Usuarios/Search")]
+        public IHttpActionResult SearchUsuarios(string query)
+        {
+            if (string.IsNullOrEmpty(query))
+            {
+                return BadRequest("La cadena de búsqueda no puede estar vacía");
+            }
+
+            // Buscar coincidencias en varios campos
+            var resultados = db.Usuario
+                .Where(u =>
+                    u.estatus == true &&
+                    (u.nombre.Contains(query) ||
+                     u.apePaterno.Contains(query) ||
+                     u.apeMaterno.Contains(query) ||
+                     u.email.Contains(query)));
+
+            return Ok(resultados);
+        }
+
+
         // PUT: api/Usuarios/5
         [ResponseType(typeof(void))]
         public IHttpActionResult PutUsuario(int id, Usuario usuario)
@@ -95,11 +118,14 @@ namespace save_apiv0.Controllers
             {
                 return NotFound();
             }
-
-            db.Usuario.Remove(usuario);
-            db.SaveChanges();
-
-            return Ok(usuario);
+            else
+            {
+                //Cambiamos el estatus del usuario a 0
+                usuario.estatus = false;
+                db.Entry(usuario).State = EntityState.Modified;
+                db.SaveChanges();
+                return Ok(usuario);
+            }        
         }
 
         protected override void Dispose(bool disposing)
