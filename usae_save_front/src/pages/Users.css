@@ -15,7 +15,7 @@
     overflow-x: hidden;
     padding: 1em;
     /*Agregamos un background azul gradiente con efecto de difuminado*/
-    background: linear-gradient(90deg, rgba(13, 0, 72, 0.5) 0%, rgba(0, 4, 255, 0.2) 100%), url("https://images.unsplash.com/photo-1517245386807-9b4d0d6f9b1d?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YmFja2dyb3VuZCUyMHN0YXRpb25zJTIwY2FyZCUyMHN0YXRpb24lMjBjYXJkJTIwc3RhdGlvbiUyMGNhcmQlMjBzdGF0aW9uJTIwY2FyZCUyMHN0YXRpb24lMjBjYXJkJTIwc3RhdGlvbiUyMGNhcmQlMjBzdGF0aW9uJTIwY2FyZCUyMHN0YXRpb24lMjBjYXJkJTIwc3RhdGlvbiUyMGNhcmQlMjBzdGF0aW9uJTIwY2FyZCUyMHN0YXRpb24lMjBjYXJkJTIwc3RhdGlvbiUyMGNhcmQlMjBzdGF0aW9uJTIwY2FyZCUyMHN0YXRpb24lMjBjYXJkJTIwc3RhdGlvbiUyMGNhcmQlMjBzdGF0aW9uJTIwY2FyZCUyMHN0YXRpb24lMjBjYXJkJTIwc3RhdGlvbiUyMGNhcmQlMjBzdGF0aW9uJTIwY2FyZCUyMHN0YXRpb24lMjBjYXJkJTIwc3RhdGlvbiUyMGNhcmQlMjBzdGF0aW9uJTIwY2FyZCUyMHN0YXRpb24lMj");
+    background: linear-gradient(90deg, rgba(13, 0, 72, 0.5) 0%, rgba(0, 4, 255, 0.2) 100%);
 }
 
 .escritorio-add {
@@ -26,6 +26,12 @@
     backdrop-filter: blur(5px);
     /* Ajusta el valor de blur según tu preferencia */
 }
+
+.margImgCart {
+    margin-top: 10%;
+    margin-bottom: 10%;
+}
+
 
 
 /*Apartado para la versión movil*/

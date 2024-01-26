@@ -8,7 +8,7 @@ namespace save_apiv0.Models
     public partial class Model1 : DbContext
     {
         public Model1()
-            : base("name=Model1")
+            : base("name=Model12")
         {
         }
 
@@ -75,14 +75,6 @@ namespace save_apiv0.Models
             modelBuilder.Entity<Servicio>()
                 .Property(e => e.mecanico)
                 .IsUnicode(false);
-
-            modelBuilder.Entity<Servicio>()
-                .Property(e => e.descripcion)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Servicio>()
-                .Property(e => e.presupuesto)
-                .HasPrecision(18, 0);
 
             modelBuilder.Entity<Servicio>()
                 .HasMany(e => e.Historial)
@@ -163,6 +155,10 @@ namespace save_apiv0.Models
             modelBuilder.Entity<Vehiculo>()
                 .Property(e => e.kilometrajeRegistro)
                 .HasPrecision(18, 0);
+
+            modelBuilder.Entity<Vehiculo>()
+                .Property(e => e.comparteCon)
+                .IsUnicode(false);
 
             modelBuilder.Entity<Vehiculo>()
                 .HasMany(e => e.Historial)

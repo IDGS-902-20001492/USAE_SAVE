@@ -44,7 +44,6 @@ export const Users = () => {
 
     const addUser = async () => {
         try {
-            alert(JSON.stringify(newUser));
 
             await fetch("/api/Usuarios", {
                 method: "POST",

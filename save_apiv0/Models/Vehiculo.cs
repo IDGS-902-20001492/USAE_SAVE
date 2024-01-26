@@ -41,7 +41,11 @@ namespace save_apiv0.Models
 
         public decimal? kilometrajeRegistro { get; set; }
 
+        public string comparteCon { get; set; }
+
         public int id_usuario { get; set; }
+
+        public bool? estatus { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Historial> Historial { get; set; }

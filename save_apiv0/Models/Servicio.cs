@@ -34,10 +34,6 @@ namespace save_apiv0.Models
 
         public bool? estatus { get; set; }
 
-        public string descripcion { get; set; }
-
-        public decimal? presupuesto { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Historial> Historial { get; set; }
 

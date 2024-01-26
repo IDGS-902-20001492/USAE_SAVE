@@ -19,7 +19,8 @@ namespace save_apiv0.Controllers
         // GET: api/Vehiculos
         public IQueryable<Vehiculo> GetVehiculo()
         {
-            return db.Vehiculo;
+            //Retornamos todos los que tengan estatus en true
+            return db.Vehiculo.Where(e => e.estatus == true);
         }
 
         // GET: api/Vehiculos/5
@@ -34,6 +35,31 @@ namespace save_apiv0.Controllers
 
             return Ok(vehiculo);
         }
+
+        // GET: api/Vehiculos/Search?query={cadena}
+        [HttpGet]
+        [Route("api/Vehiculos/Search")]
+        public IHttpActionResult SearchVehiculos(string query)
+        {
+            if (string.IsNullOrEmpty(query))
+            {
+                return BadRequest("La cadena de búsqueda no puede estar vacía");
+            }
+
+            // Buscar coincidencias en varios campos
+            var resultados = db.Vehiculo
+                .Where(u =>
+                       u.estatus == true &&
+                      (u.placas.Contains(query) ||
+                       u.modelo.Contains(query) ||
+                       u.marca.Contains(query) ||
+                       u.comparteCon.Contains(query) ||
+                       u.Usuario.nombre.Contains(query)
+                       ));
+
+            return Ok(resultados);
+        }
+
 
         // PUT: api/Vehiculos/5
         [ResponseType(typeof(void))]
@@ -95,7 +121,9 @@ namespace save_apiv0.Controllers
                 return NotFound();
             }
 
-            db.Vehiculo.Remove(vehiculo);
+            //Le ponemos el estatus en falso 
+            vehiculo.estatus = false;
+            db.Entry(vehiculo).State = EntityState.Modified;
             db.SaveChanges();
 
             return Ok(vehiculo);
