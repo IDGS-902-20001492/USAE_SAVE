@@ -19,7 +19,8 @@ namespace save_apiv0.Controllers
         // GET: api/Servicios
         public IQueryable<Servicio> GetServicio()
         {
-            return db.Servicio;
+           //retornando todos los servicios con estado true
+            return db.Servicio.Where(x => x.estatus == true);
         }
 
         // GET: api/Servicios/5
@@ -33,6 +34,58 @@ namespace save_apiv0.Controllers
             }
 
             return Ok(servicio);
+        }
+
+        //Servicio para obtener los servicios basados en la id de una persona
+        // GET: api/Servicios/Search/5
+        [HttpGet]
+        [Route("api/Servicios/Search")]
+        public IHttpActionResult SearchServicios(int id, bool orden)
+        {
+            if (id == 0)
+            {
+                //Retornamos los servicios con estado true
+                var resultados = db.Servicio.Where(x => x.estatus == true);
+                if(orden == true)
+                {
+                    resultados = resultados.OrderBy(s => s.fechaProgramada);
+                }
+                else if(orden == false)
+                {
+                    resultados = resultados.OrderByDescending(s => s.fechaProgramada);
+                }
+                return Ok(resultados);
+            }
+            else
+            {
+                // Buscar coincidencias en varios campos y si orden es 0 no ordenar, si es 1 ordenar de forma ascendente y si es 2 ordenar de forma descendente
+                var resultados = db.Servicio
+                .Where(s =>
+                           s.estatus == true &&
+                                              s.Vehiculo.id_usuario == id);
+
+                if (orden == true)
+                {
+                    resultados = resultados.OrderBy(s => s.fechaProgramada);
+                }
+                else if (orden == false)
+                {
+                    resultados = resultados.OrderByDescending(s => s.fechaProgramada);
+                }
+
+                return Ok(resultados);
+            }
+        }
+
+        //Servicio para obtener los servicios de una fecha en especifico
+        // GET: api/Servicios/SearchByDate/5
+        [HttpGet]
+        [Route("api/Servicios/SearchByDate")]
+        public IHttpActionResult SearchServiciosByDate(DateTime fecha)
+        {
+            //Retornamos los servicios con estado true
+            var resultados = db.Servicio.Where(x => x.estatus == true && x.fechaProgramada == fecha);
+            return Ok(resultados);
         }
 
         // PUT: api/Servicios/5
@@ -95,7 +148,9 @@ namespace save_apiv0.Controllers
                 return NotFound();
             }
 
-            db.Servicio.Remove(servicio);
+            //Modificando el estado del servicio a false
+            servicio.estatus = false;
+            db.Entry(servicio).State = EntityState.Modified;
             db.SaveChanges();
 
             return Ok(servicio);

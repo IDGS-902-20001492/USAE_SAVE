@@ -31,7 +31,8 @@ namespace save_apiv0.Models
         [StringLength(255)]
         public string apeMaterno { get; set; }
 
-        public int? edad { get; set; }
+        [StringLength(255)]
+        public string telefono { get; set; }
 
         [Required]
         [StringLength(255)]

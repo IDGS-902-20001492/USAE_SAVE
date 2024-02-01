@@ -8,7 +8,7 @@ namespace save_apiv0.Models
     public partial class Model1 : DbContext
     {
         public Model1()
-            : base("name=Model12")
+            : base("name=Model13")
         {
         }
 
@@ -16,7 +16,6 @@ namespace save_apiv0.Models
         public virtual DbSet<Pieza> Pieza { get; set; }
         public virtual DbSet<Reparacion> Reparacion { get; set; }
         public virtual DbSet<Servicio> Servicio { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
         public virtual DbSet<Vehiculo> Vehiculo { get; set; }
 
@@ -77,6 +76,14 @@ namespace save_apiv0.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<Servicio>()
+                .Property(e => e.descripcion)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Servicio>()
+                .Property(e => e.presupuesto)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<Servicio>()
                 .HasMany(e => e.Historial)
                 .WithOptional(e => e.Servicio)
                 .HasForeignKey(e => e.id_servicio);
@@ -91,6 +98,10 @@ namespace save_apiv0.Models
 
             modelBuilder.Entity<Usuario>()
                 .Property(e => e.apeMaterno)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Usuario>()
+                .Property(e => e.telefono)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Usuario>()
@@ -168,6 +179,12 @@ namespace save_apiv0.Models
 
             modelBuilder.Entity<Vehiculo>()
                 .HasMany(e => e.Reparacion)
+                .WithRequired(e => e.Vehiculo)
+                .HasForeignKey(e => e.id_vehiculo)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Vehiculo>()
+                .HasMany(e => e.Servicio)
                 .WithRequired(e => e.Vehiculo)
                 .HasForeignKey(e => e.id_vehiculo)
                 .WillCascadeOnDelete(false);

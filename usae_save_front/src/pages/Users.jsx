@@ -11,7 +11,7 @@ export const Users = () => {
         nombre: "",
         apePaterno: "",
         apeMaterno: "",
-        edad: 0,
+        telefono: "",
         centroTrabajo: "",
         zona: "",
         nivel: "",
@@ -63,7 +63,7 @@ export const Users = () => {
                         nombre: "",
                         apePaterno: "",
                         apeMaterno: "",
-                        edad: 0,
+                        telefono: "",
                         centroTrabajo: "",
                         zona: "",
                         nivel: "",
@@ -107,7 +107,7 @@ export const Users = () => {
                         nombre: "",
                         apePaterno: "",
                         apeMaterno: "",
-                        edad: 0,
+                        telefono: "",
                         centroTrabajo: "",
                         zona: "",
                         nivel: "",
@@ -236,7 +236,7 @@ export const Users = () => {
             nombre: "",
             apePaterno: "",
             apeMaterno: "",
-            edad: 0,
+            telefono: "",
             centroTrabajo: "",
             zona: "",
             nivel: "",
@@ -304,9 +304,9 @@ export const Users = () => {
                                 <th>Nombre</th>
                                 <th>Apellido Paterno</th>
                                 <th>Apellido Materno</th>
-                                <th>Edad</th>
+                                <th>Teléfono</th>
                                 <th>Centro de Trabajo</th>
-                                <th>Zona</th>
+                                <th>Zona/Sector</th>
                                 <th>Nivel</th>
                                 <th>Gobierno</th>
                                 <th>Email</th>
@@ -321,7 +321,7 @@ export const Users = () => {
                                         <td>{user.nombre}</td>
                                         <td>{user.apePaterno}</td>
                                         <td>{user.apeMaterno}</td>
-                                        <td>{user.edad} años</td>
+                                        <td>{user.telefono}</td>
                                         <td>{user.centroTrabajo}</td>
                                         <td>{user.zona}</td>
                                         <td>{user.nivel}</td>
@@ -367,9 +367,9 @@ export const Users = () => {
                                         </div>
                                         <div className="col-6">
                                             <h5 className="card-title fw-bold">{user.nombre} {user.apePaterno} {user.apeMaterno}</h5>
-                                            <p className="card-text"><b>Edad:</b> {user.edad} años</p>
+                                            <p className="card-text"><b>Telefono:</b> {user.telefono}</p>
                                             <p className="card-text"><b>Centro de Trabajo:</b> {user.centroTrabajo}</p>
-                                            <p className="card-text"><b>Zona:</b> {user.zona}</p>
+                                            <p className="card-text"><b>Zona/Sector:</b> {user.zona}</p>
                                             <p className="card-text"><b>Nivel:</b> {user.nivel}</p>
                                             <p className="card-text"><b>Gobierno: </b>{user.gobierno}</p>
                                             <p className="card-text"><b>Email:</b> {user.email}</p>
@@ -437,8 +437,8 @@ export const Users = () => {
                             </div>
                             <div className="row">
                                 <div className="col-4 mb-3">
-                                    <label htmlFor="edad" className="form-label">Edad</label>
-                                    <input type="number" className="form-control" id="edad" name="edad" value={newUser.edad} onChange={handleInputChange} />
+                                    <label htmlFor="telefono" className="form-label">Telefono</label>
+                                    <input type="number" className="form-control" id="telefono" name="telefono" value={newUser.telefono} onChange={handleInputChange} />
                                 </div>
                                 <div className="col-8 mb-3">
                                     <label htmlFor="centroTrabajo" className="form-label">Centro de Trabajo</label>
@@ -447,7 +447,7 @@ export const Users = () => {
                             </div>
                             <div className="row">
                                 <div className="col-12 mb-3">
-                                    <label htmlFor="zona" className="form-label">Zona</label>
+                                    <label htmlFor="zona" className="form-label">Zona/Sector</label>
                                     <input type="text" className="form-control" id="zona" name="zona" value={newUser.zona} onChange={handleInputChange} />
                                 </div>
                             </div>

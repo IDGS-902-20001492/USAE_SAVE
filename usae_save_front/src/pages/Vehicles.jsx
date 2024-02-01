@@ -285,8 +285,15 @@ const Vehicles = () => {
             kilometrajeRegistro: "",
             comparteCon: "",
             id_usuario: "",
+            estatus: "True",
         });
     };
+
+    //Función para abrir la imagen en una nueva pestaña
+    const openImage = (img) => {
+        //Abrimos la imagen en una nueva pestaña y ampliada
+        window.open(from64(img), "_blank");
+    }
 
     return (
         <div className="fluid-content noS">
@@ -358,7 +365,7 @@ const Vehicles = () => {
                             {
                                 carts.map((vehicle) => (
                                     <tr key={vehicle.id}>
-                                        <td className="tdImg"><img className="imgCocheMini" src={from64(vehicle.imagen)} /></td>
+                                        <td className="tdImg"><button className="btnAbrirImg" onClick={() => { openImage(vehicle.imagen) }}><img className="imgCocheMini" src={from64(vehicle.imagen)} /></button></td>
                                         <td>{vehicle.marca}</td>
                                         <td>{vehicle.modelo}</td>
                                         <td>{vehicle.placas}</td>

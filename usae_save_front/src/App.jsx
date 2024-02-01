@@ -4,6 +4,7 @@ import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import { Users } from "./pages/Users";
 import './Navbar.css';
 import Vehicles from "./pages/Vehicles";
+import { Services } from "./pages/Services";
 function App() {
 
   return (
@@ -19,6 +20,7 @@ function App() {
                 <div className="navbar-nav">
                   <Link to="/users" className="nav-link">Usuarios</Link>
                   <Link to="/vehicles" className="nav-link">Vehiculos</Link>
+                  <Link to="/services" className="nav-link">Servicios</Link>
                 </div>
               </div>
             </div>
@@ -31,6 +33,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/users" element={<Users />} />
           <Route path="/vehicles" element={<Vehicles />} />
+          <Route path="/services" element={<Services />} />
         </Routes>
       </BrowserRouter>
     </>

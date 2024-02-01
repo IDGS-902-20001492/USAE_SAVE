@@ -17,7 +17,7 @@
 .imgCart {
     margin-top: 1em;
     width: 90%;
-    height: 70%;
+    height: 80%;
     object-fit: cover;
     margin-left: 5%;
 }
@@ -31,4 +31,8 @@
 
 .tdImg {
     width: 10%;
+}
+
+.btnAbrirImg {
+    border: none;
 }

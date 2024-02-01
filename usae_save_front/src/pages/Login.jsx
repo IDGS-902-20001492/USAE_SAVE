@@ -32,7 +32,7 @@ export const Login = () => {
                     window.location.href = "/users";
                 } else {
                     //Si el error es 401, entonces el usuario no está registrado
-                    if (response.status === 401) {
+                    if (response.status === 401 || response.status === 400 || response.status === 404) {
                         mostrarSweetAlert("Error", "El usuario no está registrado", "error");
                     } else {
                         mostrarSweetAlert("Advertencia", "Servidor desconectado", "warning");

@@ -9,7 +9,7 @@ export const Register = () => {
         nombre: "",
         apePaterno: "",
         apeMaterno: "",
-        edad: 0,
+        telefono: "",
         centroTrabajo: "",
         zona: "",
         nivel: "",
@@ -101,9 +101,9 @@ export const Register = () => {
                                 <div className="row">
                                     <div className="col-4">
                                         <div className="mb-3">
-                                            <label htmlFor="age" className="form-label">Edad</label>
-                                            <input type="text" name="edad"
-                                                onChange={handleInputChange} className="form-control" id="age" placeholder="" />
+                                            <label htmlFor="telefono" className="form-label">Telefono</label>
+                                            <input type="text" name="telefono"
+                                                onChange={handleInputChange} className="form-control" id="telefono" placeholder="" />
                                         </div>
                                     </div>
                                     <div className="col-8">
@@ -117,7 +117,7 @@ export const Register = () => {
                                 <div className="row">
                                     <div className="col-12">
                                         <div className="mb-3">
-                                            <label htmlFor="zona" className="form-label">Zona</label>
+                                            <label htmlFor="zona" className="form-label">Zona/Sector</label>
                                             <input type="email" onChange={handleInputChange} name="zona"
                                                 className="form-control" id="email" placeholder="" />
                                         </div>

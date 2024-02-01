@@ -238,7 +238,6 @@
     <Compile Include="Models\Pieza.cs" />
     <Compile Include="Models\Reparacion.cs" />
     <Compile Include="Models\Servicio.cs" />
-    <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Models\Vehiculo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

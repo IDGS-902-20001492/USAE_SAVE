@@ -1,5 +1,6 @@
 namespace save_apiv0.Models
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -14,6 +15,7 @@ namespace save_apiv0.Models
         {
             Historial = new HashSet<Historial>();
             Reparacion = new HashSet<Reparacion>();
+            Servicio = new HashSet<Servicio>();
         }
 
         public int id { get; set; }
@@ -48,10 +50,16 @@ namespace save_apiv0.Models
         public bool? estatus { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [JsonIgnore]
         public virtual ICollection<Historial> Historial { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [JsonIgnore]
         public virtual ICollection<Reparacion> Reparacion { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [JsonIgnore]
+        public virtual ICollection<Servicio> Servicio { get; set; }
 
         public virtual Usuario Usuario { get; set; }
     }
