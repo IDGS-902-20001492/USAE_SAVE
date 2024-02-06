@@ -291,8 +291,12 @@ const Vehicles = () => {
 
     //Función para abrir la imagen en una nueva pestaña
     const openImage = (img) => {
-        //Abrimos la imagen en una nueva pestaña y ampliada
-        window.open(from64(img), "_blank");
+        //Creamos una nueva ventana
+        const newWindow = window.open();
+
+        //Crear un elemento de imagen a la nueva ventana
+        newWindow.document.write(`<img src="${img}" alt="Imagen de vehiculo" />`);
+
     }
 
     return (

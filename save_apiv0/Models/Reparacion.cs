@@ -1,3 +1,4 @@
+
 namespace save_apiv0.Models
 {
     using System;
@@ -26,7 +27,7 @@ namespace save_apiv0.Models
         public string tipoReparacion { get; set; }
 
         [StringLength(255)]
-        public string descripccion { get; set; }
+        public string descripcion { get; set; }
 
         public string ubicacionReparacion { get; set; }
 

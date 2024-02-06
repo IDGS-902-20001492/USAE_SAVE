@@ -5,6 +5,7 @@ import { Users } from "./pages/Users";
 import './Navbar.css';
 import Vehicles from "./pages/Vehicles";
 import { Services } from "./pages/Services";
+import { Repairs } from "./pages/Repairs";
 function App() {
 
   return (
@@ -21,6 +22,7 @@ function App() {
                   <Link to="/users" className="nav-link">Usuarios</Link>
                   <Link to="/vehicles" className="nav-link">Vehiculos</Link>
                   <Link to="/services" className="nav-link">Servicios</Link>
+                  <Link to="/repairs" className="nav-link">Reparaciones</Link>
                 </div>
               </div>
             </div>
@@ -34,6 +36,7 @@ function App() {
           <Route path="/users" element={<Users />} />
           <Route path="/vehicles" element={<Vehicles />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/repairs" element={<Repairs />} />
         </Routes>
       </BrowserRouter>
     </>

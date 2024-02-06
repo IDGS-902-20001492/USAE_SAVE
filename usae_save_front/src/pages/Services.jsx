@@ -577,7 +577,7 @@ export const Services = () => {
                                         <option defaultValue>Selecciona una opción</option>
                                         {
                                             vehicles.map((vehicle) => (
-                                                <option key={vehicle.id} value={vehicle.id}>{vehicle.modelo} - {vehicle.Usuario.nombre}</option>
+                                                <option key={vehicle.id} value={vehicle.id}>{vehicle.modelo} - {vehicle.Usuario.nombre} {vehicle.Usuario.apePaterno} {vehicle.Usuario.apeMaterno}</option>
                                             ))
                                         }
                                     </select>

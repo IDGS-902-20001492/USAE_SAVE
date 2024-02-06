@@ -102,10 +102,45 @@ namespace save_apiv0.Controllers
                 return BadRequest();
             }
 
-            db.Entry(servicio).State = EntityState.Modified;
-
             try
             {
+                // Verifica si el servicio existe
+                var servicioExistente = db.Servicio.Find(id);
+                if (servicioExistente == null)
+                {
+                    return NotFound();
+                }
+
+                // Verifica si el vehículo existe y actualiza la relación
+                if (servicio.id_vehiculo != 0)
+                {
+                    var vehiculoExistente = db.Vehiculo.Find(servicio.id_vehiculo);
+                    if (vehiculoExistente == null)
+                    {
+                        return BadRequest("El vehículo especificado no existe.");
+                    }
+
+                    // Elimina la relación anterior si existe
+                    if (servicioExistente.Vehiculo != null)
+                    {
+                        servicioExistente.Vehiculo = null;
+                        db.Entry(servicioExistente).State = EntityState.Modified;
+                    }
+
+                    // Actualiza la relación
+                    db.Entry(vehiculoExistente).State = EntityState.Unchanged;
+
+                    // Asigna el vehículo al servicio
+                    servicioExistente.Vehiculo = vehiculoExistente;
+                }
+                else
+                {
+                    // Si id_vehiculo es null, elimina la relación
+                    servicioExistente.Vehiculo = null;
+                }
+
+                // Actualiza el resto de los campos del servicio
+                db.Entry(servicioExistente).CurrentValues.SetValues(servicio);
                 db.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
@@ -122,6 +157,13 @@ namespace save_apiv0.Controllers
 
             return StatusCode(HttpStatusCode.NoContent);
         }
+
+        // Método auxiliar para verificar si un servicio existe
+        private bool ServicioExists(int id)
+        {
+            return db.Servicio.Count(e => e.id == id) > 0;
+        }
+
 
         // POST: api/Servicios
         [ResponseType(typeof(Servicio))]
@@ -165,9 +207,5 @@ namespace save_apiv0.Controllers
             base.Dispose(disposing);
         }
 
-        private bool ServicioExists(int id)
-        {
-            return db.Servicio.Count(e => e.id == id) > 0;
-        }
     }
 }

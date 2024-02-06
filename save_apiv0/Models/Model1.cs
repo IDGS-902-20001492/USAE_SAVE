@@ -35,7 +35,7 @@ namespace save_apiv0.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<Reparacion>()
-                .Property(e => e.descripccion)
+                .Property(e => e.descripcion)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Reparacion>()

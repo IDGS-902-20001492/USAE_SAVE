@@ -75,10 +75,45 @@ namespace save_apiv0.Controllers
                 return BadRequest();
             }
 
-            db.Entry(vehiculo).State = EntityState.Modified;
-
             try
             {
+                // Verifica si el vehículo existe
+                var vehiculoExistente = db.Vehiculo.Find(id);
+                if (vehiculoExistente == null)
+                {
+                    return NotFound();
+                }
+
+                // Verifica si el usuario existe y actualiza la relación
+                if (vehiculo.id_usuario != 0)
+                {
+                    var usuarioExistente = db.Usuario.Find(vehiculo.id_usuario);
+                    if (usuarioExistente == null)
+                    {
+                        return BadRequest("El usuario especificado no existe.");
+                    }
+
+                    // Elimina la relación anterior si existe
+                    if (vehiculoExistente.Usuario != null)
+                    {
+                        vehiculoExistente.Usuario = null;
+                        db.Entry(vehiculoExistente).State = EntityState.Modified;
+                    }
+
+                    // Actualiza la relación
+                    db.Entry(usuarioExistente).State = EntityState.Unchanged;
+
+                    // Asigna el usuario al vehículo
+                    vehiculoExistente.Usuario = usuarioExistente;
+                }
+                else
+                {
+                    // Si id_usuario es null, elimina la relación
+                    vehiculoExistente.Usuario = null;
+                }
+
+                // Actualiza el resto de los campos del vehículo
+                db.Entry(vehiculoExistente).CurrentValues.SetValues(vehiculo);
                 db.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
@@ -95,6 +130,13 @@ namespace save_apiv0.Controllers
 
             return StatusCode(HttpStatusCode.NoContent);
         }
+
+        // Método auxiliar para verificar si un vehículo existe
+        private bool VehiculoExists(int id)
+        {
+            return db.Vehiculo.Count(e => e.id == id) > 0;
+        }
+
 
         // POST: api/Vehiculos
         [ResponseType(typeof(Vehiculo))]
@@ -136,11 +178,6 @@ namespace save_apiv0.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        private bool VehiculoExists(int id)
-        {
-            return db.Vehiculo.Count(e => e.id == id) > 0;
         }
     }
 }
