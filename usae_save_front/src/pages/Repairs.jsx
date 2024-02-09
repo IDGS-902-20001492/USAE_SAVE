@@ -347,7 +347,7 @@ export const Repairs = () => {
     };
 
     return (
-        <div className="fluid-content noS">
+        <div className="fluid-content noS fade-in">
             <h1 className="text-center text-white"><i className="fa-solid fa-toolbox"></i> Reparaciones</h1>
             <div className="row">
                 <div className="col-4 user-select">
@@ -425,63 +425,77 @@ export const Repairs = () => {
                         </thead>
                         <tbody>
                             {
-                                repairs.map((rep) => (
-                                    <tr key={rep.id}>
-                                        <td>
-                                            <div className="row">
-                                                <div className="col-12">
-                                                    <p><i className="fas fa-wrench"></i><b>Inicio:</b> {sortDate(rep.fecha)}</p>
+                                repairs.length > 0 ? (
+                                    repairs.map((rep) => (
+                                        <tr key={rep.id}>
+                                            <td>
+                                                <div className="row">
+                                                    <div className="col-12">
+                                                        <p><i className="fas fa-wrench"></i><b>Inicio:</b> {sortDate(rep.fecha)}</p>
+                                                    </div>
+                                                    <div className="col-12">
+                                                        <p><i className="fas fa-wrench"></i><b>Fin:</b> {sortDate(rep.fechaFin)}</p>
+                                                    </div>
                                                 </div>
-                                                <div className="col-12">
-                                                    <p><i className="fas fa-wrench"></i><b>Fin:</b> {sortDate(rep.fechaFin)}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>{rep.tipoReparacion}</td>
-                                        <td>{rep.descripcion}</td>
-                                        <td>{rep.ubicacionReparacion}</td>
-                                        <td>{rep.observaciones}</td>
-                                        <td>{rep.nombreMecanico}</td>
-                                        <td>${rep.presupuesto}</td>
-                                        <td>{rep.Vehiculo.modelo}</td>
-                                        <td>{rep.Vehiculo.Usuario.nombre} {rep.Vehiculo.Usuario.apePaterno}{rep.Vehiculo.Usuario.apematerno}</td>
-                                        <td>{
-                                            rep.estatusReparacion === 0 ?
-                                                <p>
-                                                    <i className="fas fa-times"></i>No
-                                                    <button className="btn btn-secondary ms-1" onClick={() => changeRepairStatus(rep.id)} title="Concluir/Cambiar reparación">
-                                                        <i className="fa-solid fa-arrows-rotate"></i>
-                                                    </button>
-                                                </p>
-                                                :
-                                                <p>
-                                                    <i className="fas fa-check"></i>Si
-                                                    <button className="btn btn-secondary ms-1" onClick={() => changeRepairStatus(rep.id)} title="Concluir/Cambiar reparación">
-                                                        <i className="fa-solid fa-arrows-rotate"></i>
-                                                    </button>
-                                                </p>
-                                        }</td>
-                                        <td>
-                                            <button className="btn btn-success" onClick={
-                                                () => {
-                                                    modifyModal(rep.id);
-                                                }
-                                            }>
-                                                <i className="fas fa-edit"></i>
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <button className="btn btn-danger"
-                                                onClick={
+                                            </td>
+                                            <td>{rep.tipoReparacion}</td>
+                                            <td>{rep.descripcion}</td>
+                                            <td>{rep.ubicacionReparacion}</td>
+                                            <td>{
+                                                rep.observaciones === "" || rep.observaciones === null ? "Sin observaciones" : rep.observaciones
+                                            }</td>
+                                            <td>{rep.nombreMecanico}</td>
+                                            <td>${rep.presupuesto}</td>
+                                            <td>{rep.Vehiculo.modelo}</td>
+                                            <td>{rep.Vehiculo.Usuario.nombre} {rep.Vehiculo.Usuario.apePaterno} {rep.Vehiculo.Usuario.apeMaterno}</td>
+                                            <td>{
+                                                rep.estatusReparacion === 0 ?
+                                                    <p>
+                                                        <i className="fas fa-times"></i>No
+                                                        <button className="btn btn-secondary ms-1" onClick={() => changeRepairStatus(rep.id)} title="Concluir/Cambiar reparación">
+                                                            <i className="fa-solid fa-arrows-rotate"></i>
+                                                        </button>
+                                                    </p>
+                                                    :
+                                                    <p>
+                                                        <i className="fas fa-check"></i>Si
+                                                        <button className="btn btn-secondary ms-1" onClick={() => changeRepairStatus(rep.id)} title="Concluir/Cambiar reparación">
+                                                            <i className="fa-solid fa-arrows-rotate"></i>
+                                                        </button>
+                                                    </p>
+                                            }</td>
+                                            <td>
+                                                <button className="btn btn-success" onClick={
                                                     () => {
-                                                        deleteRepair(rep.id);
+                                                        modifyModal(rep.id);
                                                     }
                                                 }>
-                                                <i className="fas fa-trash-alt"></i>
-                                            </button>
+                                                    <i className="fas fa-edit"></i>
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button className="btn btn-danger"
+                                                    onClick={
+                                                        () => {
+                                                            deleteRepair(rep.id);
+                                                        }
+                                                    }>
+                                                    <i className="fas fa-trash-alt"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="12">
+                                            <div className="alert alert-info" role="alert">
+                                                <i className="fas fa-exclamation-triangle"></i>
+                                                No hay reparaciones registradas para esta fecha ó persona.
+                                            </div>
                                         </td>
                                     </tr>
-                                ))
+                                )
+
                             }
                         </tbody>
                     </table>
@@ -489,68 +503,77 @@ export const Repairs = () => {
                 {/*Creamos cards para la versión movil*/}
                 <div id="movilUsers" className="col-md-12">
                     {
-                        repairs.map((rep) => (
-                            <div className="card mt-2" key={rep.id}>
-                                <div className="card-body shadow rounded">
-                                    <div className="row">
-                                        <div className="col-4">
-                                            <div>
-                                                <img src="/img/repair.png" className="min_repair" />
+                        repairs.length > 0 ? (
+                            repairs.map((rep) => (
+                                <div className="card mt-2" key={rep.id}>
+                                    <div className="card-body shadow rounded">
+                                        <div className="row">
+                                            <div className="col-4">
+                                                <div>
+                                                    <img src="/img/repair.png" className="min_repair" />
+                                                </div>
+                                            </div>
+                                            <div className="col-8">
+                                                <h5 className="card-title">{rep.Vehiculo.modelo}</h5>
+                                                <p className="card-text">{rep.Vehiculo.Usuario.nombre} {rep.Vehiculo.Usuario.apePaterno} {rep.Vehiculo.Usuario.apeMaterno}</p>
                                             </div>
                                         </div>
-                                        <div className="col-8">
-                                            <h5 className="card-title">{rep.Vehiculo.modelo}</h5>
-                                            <p className="card-text">{rep.Vehiculo.Usuario.nombre} {rep.Vehiculo.Usuario.apePaterno} {rep.Vehiculo.Usuario.apeMaterno}</p>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-12">
-                                            {/*Ponemos todos los datos de la reparacion*/}
-                                            <p><i className="fas fa-wrench"></i><b>Inicio:</b> {sortDate(rep.fecha)}</p>
-                                            <p><i className="fas fa-wrench"></i><b>Fin:</b> {sortDate(rep.fechaFin)}</p>
-                                            <p><i className="fas fa-tools"></i><b>Tipo de reparación:</b> {rep.tipoReparacion}</p>
-                                            <p><i className="fas fa-map-marker-alt"></i><b>Ubicación:</b> {rep.ubicacionReparacion}</p>
-                                            <p><i className="fas fa-file-alt"></i><b>Descripción:</b> {rep.descripcion}</p>
-                                            <p><i className="fas fa-eye"></i><b>Observaciones:</b> {rep.observaciones}</p>
-                                            <p><i className="fas fa-user"></i><b>Mecánico:</b> {rep.nombreMecanico}</p>
-                                            <p><i className="fas fa-dollar-sign"></i><b>Presupuesto:</b> ${rep.presupuesto}</p>
-                                            <p><i className="fas fa-check"></i><b>Reparación Concluida:</b> {
-                                                rep.estatusReparacion === 0 ? "No" : "Si"
-                                            }</p>
-                                        </div>
+                                        <div className="row">
+                                            <div className="col-12">
+                                                {/*Ponemos todos los datos de la reparacion*/}
+                                                <p><i className="fas fa-wrench"></i><b>Inicio:</b> {sortDate(rep.fecha)}</p>
+                                                <p><i className="fas fa-wrench"></i><b>Fin:</b> {sortDate(rep.fechaFin)}</p>
+                                                <p><i className="fas fa-tools"></i><b>Tipo de reparación:</b> {rep.tipoReparacion}</p>
+                                                <p><i className="fas fa-map-marker-alt"></i><b>Ubicación:</b> {rep.ubicacionReparacion}</p>
+                                                <p><i className="fas fa-file-alt"></i><b>Descripción:</b> {rep.descripcion}</p>
+                                                <p><i className="fas fa-eye"></i><b>Observaciones:</b> {
+                                                    rep.observaciones === "" || rep.observaciones === null ? "Sin observaciones" : rep.observaciones
+                                                }</p>
+                                                <p><i className="fas fa-user"></i><b>Mecánico:</b> {rep.nombreMecanico}</p>
+                                                <p><i className="fas fa-dollar-sign"></i><b>Presupuesto:</b> ${rep.presupuesto}</p>
+                                                <p><i className="fas fa-check"></i><b>Reparación Concluida:</b> {
+                                                    rep.estatusReparacion === 0 ? "No" : "Si"
+                                                }</p>
+                                            </div>
 
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-4">
-                                            <button className="btn btn-secondary w-100 mt-2" onClick={() => changeRepairStatus(rep.id)}>
-                                                <i className="fa-solid fa-arrows-rotate"> </i>{
-                                                    rep.estatusReparacion === 0 ? "Concluir" : "Reabrir"
-                                                }
-                                            </button>
                                         </div>
-                                        <div className="col-4">
-                                            <button className="btn btn-success w-100 mt-2" onClick={
-                                                () => {
-                                                    modifyModal(rep.id);
-                                                }
-                                            }>
-                                                <i className="fas fa-edit"> </i>Editar
-                                            </button>
-                                        </div>
-                                        <div className="col-4">
-                                            <button className="btn btn-danger w-100 mt-2"
-                                                onClick={
+                                        <div className="row">
+                                            <div className="col-4">
+                                                <button className="btn btn-secondary w-100 mt-2" onClick={() => changeRepairStatus(rep.id)}>
+                                                    <i className="fa-solid fa-arrows-rotate"> </i>{
+                                                        rep.estatusReparacion === 0 ? "Concluir" : "Reabrir"
+                                                    }
+                                                </button>
+                                            </div>
+                                            <div className="col-4">
+                                                <button className="btn btn-success w-100 mt-2" onClick={
                                                     () => {
-                                                        deleteRepair(rep.id);
+                                                        modifyModal(rep.id);
                                                     }
                                                 }>
-                                                <i className="fas fa-trash-alt"> </i>Eliminar
-                                            </button>
+                                                    <i className="fas fa-edit"> </i>Editar
+                                                </button>
+                                            </div>
+                                            <div className="col-4">
+                                                <button className="btn btn-danger w-100 mt-2"
+                                                    onClick={
+                                                        () => {
+                                                            deleteRepair(rep.id);
+                                                        }
+                                                    }>
+                                                    <i className="fas fa-trash-alt"> </i>Eliminar
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            ))
+                        ) : (
+                            <div className="alert alert-info" role="alert">
+                                <i className="fas fa-exclamation-triangle"></i>
+                                No hay reparaciones registradas para esta fecha ó persona.
                             </div>
-                        ))
+                        )
                     }
                 </div>
             </div>
@@ -573,6 +596,19 @@ export const Repairs = () => {
                         </div>
                         <div className="modal-body">
                             {/* Formulario */}
+                            <div className="row mb-1">
+                                <div className="col-12 mb-1">
+                                    <label htmlFor="id_vehiculo" className="form-label">Vehiculo</label>
+                                    <select className="form-select" id="id_vehiculo" name="id_vehiculo" value={newRepair.id_vehiculo} onChange={handleInputChange}>
+                                        <option value="0">Selecciona un vehiculo</option>
+                                        {
+                                            vehicles.map((vehicle) => (
+                                                <option key={vehicle.id} value={vehicle.id}>{vehicle.modelo} - {vehicle.Usuario.nombre} {vehicle.Usuario.apePaterno} {vehicle.Usuario.apeMaterno}</option>
+                                            ))
+                                        }
+                                    </select>
+                                </div>
+                            </div>
                             <div className="row">
                                 <div className="col-6 mb-1">
                                     <label htmlFor="fecha" className="form-label">Fecha de reparación</label>
@@ -621,19 +657,7 @@ export const Repairs = () => {
                                     <input type="text" className="form-control" id="nombreMecanico" name="nombreMecanico" value={newRepair.nombreMecanico} onChange={handleInputChange} />
                                 </div>
                             </div>
-                            <div className="row">
-                                <div className="col-12 mb-1">
-                                    <label htmlFor="id_vehiculo" className="form-label">Vehiculo</label>
-                                    <select className="form-select" id="id_vehiculo" name="id_vehiculo" value={newRepair.id_vehiculo} onChange={handleInputChange}>
-                                        <option value="0">Selecciona un vehiculo</option>
-                                        {
-                                            vehicles.map((vehicle) => (
-                                                <option key={vehicle.id} value={vehicle.id}>{vehicle.modelo} - {vehicle.Usuario.nombre} {vehicle.Usuario.apePaterno} {vehicle.Usuario.apeMaterno}</option>
-                                            ))
-                                        }
-                                    </select>
-                                </div>
-                            </div>
+
                         </div>
                         <div className="modal-footer">
                             {/* Botón para agregar usuario o modificar usuario*/}

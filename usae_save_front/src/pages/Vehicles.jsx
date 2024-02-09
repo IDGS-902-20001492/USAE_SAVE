@@ -38,7 +38,15 @@ const Vehicles = () => {
         try {
             const res = await fetch("/api/Vehiculos");
             const data = await res.json();
-            setAllCarts(data);
+
+            if (localStorage.getItem("level") === "2") {
+                setAllCarts(data);
+            } else {
+                let cars = data.filter((car) => car.id_usuario === parseInt(localStorage.getItem("id")));
+                setAllCarts(cars);
+            }
+
+
         } catch (error) {
             console.log(error);
         }
@@ -48,7 +56,12 @@ const Vehicles = () => {
         try {
             const res = await fetch("/api/Usuarios");
             const data = await res.json();
-            setUsers(data);
+            if (localStorage.getItem("level") === "2") {
+                setUsers(data);
+            } else {
+                let users = data.filter((user) => user.id === parseInt(localStorage.getItem("id")));
+                setUsers(users);
+            }
         }
         catch (error) {
             console.log(error);
@@ -299,55 +312,174 @@ const Vehicles = () => {
 
     }
 
+    const confirmarActualizacion = async () => {
+        //Preguntamos si el usuario está seguro de actualizar el kilometraje
+        Swal.fire({
+            title: "¿Estás seguro?",
+            text: "El kilometraje se actualizará.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Si",
+            cancelButtonText: "No, cancelar",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                actKilometraje();
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire(
+                    "Cancelado",
+                    "Actualización cancelada",
+                    "Success"
+                );
+            }
+        });
+    }
+
+    const actKilometraje = async () => {
+        const kilometraje = document.getElementById("actKilometraje").value;
+        const cocheAsignado = carts[0];
+
+        if (kilometraje === "") {
+            mostrarSweetAlert("Error", "El campo de kilometraje no puede estar vacío", "error");
+            return;
+        } else if (kilometraje < cocheAsignado.kilometrajeRegistro) {
+            mostrarSweetAlert("Error", "El kilometraje no puede ser menor al registrado", "error");
+            return;
+        } else {
+            try {
+                await fetch(`/api/Vehiculos/${cocheAsignado.id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        id: cocheAsignado.id,
+                        marca: cocheAsignado.marca,
+                        modelo: cocheAsignado.modelo,
+                        tipo: cocheAsignado.tipo,
+                        placas: cocheAsignado.placas,
+                        imagen: cocheAsignado.imagen,
+                        combustible: cocheAsignado.combustible,
+                        kilometrajeRegistro: kilometraje,
+                        comparteCon: cocheAsignado.comparteCon,
+                        id_usuario: cocheAsignado.id_usuario,
+                        estatus: "True",
+                    })
+                }).catch((error) => {
+                    console.log(error);
+                }).then((response) => {
+                    if (response.ok === true) {
+                        mostrarSweetAlert("Modificación exitosa", "El kilometraje se actualizó correctamente", "success");
+                        getCars();
+                        //Limpiar formulario
+                        setCar({
+                            id: 0,
+                            marca: "",
+                            modelo: "",
+                            tipo: "",
+                            placas: "",
+                            imagen: "",
+                            combustible: "",
+                            kilometrajeRegistro: "",
+                            comparteCon: "",
+                            id_usuario: "",
+                            estatus: "True",
+                        });
+                        //Limpiamos el input de kilometraje
+                        document.getElementById("actKilometraje").value = "";
+                    } else {
+                        //Impresión de error en consola
+                        console.log(response);
+                        mostrarSweetAlert("Error", "El kilometraje no se pudo modificar", "error");
+                    }
+                });
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+    }
+
     return (
-        <div className="fluid-content noS">
+        <div className="fluid-content noS fade-in">
             <h1 className="text-center text-white"><i className="fas fa-car"></i> Vehiculos</h1>
             <div className="row">
                 <div className="col-md-10">
-                    <div className="input-group mb-3">
-                        <input type="text" className="form-control" id="buscar" placeholder="Buscar" aria-label="Recipient's username" aria-describedby="button-addon2" />
+                    {
+                        localStorage.getItem("level") === "2" ? (
 
-                        {
-                            search ?
-                                <div>
-                                    <button className="btn btn-outline-secondary" type="button" onClick={handleClear}>
-                                        Limpiar
-                                    </button>
-                                    <button className="btn btn-outline-secondary" type="button" id="button-addon2"
-                                        onClick={
-                                            () => {
-                                                findCar();
-                                            }
-                                        }>Buscar</button>
+                            <div className="input-group mb-3">
+                                <input type="text" className="form-control" id="buscar" placeholder="Buscar" aria-label="Recipient's username" aria-describedby="button-addon2" />
+
+                                {
+                                    search ?
+                                        <div>
+                                            <button className="btn btn-secondary" type="button" onClick={handleClear}>
+                                                Limpiar
+                                            </button>
+                                            <button className="btn btn-secondary" type="button" id="button-addon2"
+                                                onClick={
+                                                    () => {
+                                                        findCar();
+                                                    }
+                                                }>Buscar</button>
+                                        </div>
+                                        :
+                                        <button className="btn btn-outline-secondary" type="button" id="button-addon2"
+                                            onClick={
+                                                () => {
+                                                    findCar();
+                                                }
+                                            }>Buscar</button>
+                                }
+                            </div>
+                        ) : (
+                            <>
+                                {/*Creamos una sección dedicada a actualizar el kilometraje del vehiculo*/}
+                                <div className="input-group mb-3">
+                                    <input type="number" className="form-control" id="actKilometraje" />
+                                    <button className="btn btn-secondary" type="button" id="button-addon2" onClick={confirmarActualizacion}>Actualizar Kilometraje</button>
                                 </div>
-                                :
-                                <button className="btn btn-outline-secondary" type="button" id="button-addon2"
-                                    onClick={
-                                        () => {
-                                            findCar();
-                                        }
-                                    }>Buscar</button>
-                        }
-                    </div>
+                            </>
+                        )
+                    }
                 </div>
                 <div className="col-md-2">
                     <div className="d-grid gap-2 d-md-flex justify-content-md-center">
-                        <button className="btn btn-primary me-md-2 escritorio-add" type="button" onClick={openModal} >
-                            <i className="fas fa-plus"></i>
-                            Agregar Vehiculo
-                        </button>
+                        {
+                            localStorage.getItem("level") === "1" && carts.length != 0 ? (
+                                <button className="btn btn-primary me-md-2 escritorio-add" type="button" onClick={openModal} disabled >
+                                    <i className="fas fa-plus"></i>
+                                    Agregar Vehiculo
+                                </button>
+                            ) : (
+                                <button className="btn btn-primary me-md-2 escritorio-add" type="button" onClick={openModal} >
+                                    <i className="fas fa-plus"></i>
+                                    Agregar Vehiculo
+                                </button>
+                            )
+                        }
                     </div>
                 </div>
             </div>
             <div className="row">
-                <div className="col-md-2">
-                    <button className="btn btn-primary me-md-2 movil-add" type="button" onClick={openModal} >
-                        <i className="fas fa-plus"></i>Agregar
-                    </button>
-                </div>
+                {
+                    localStorage.getItem("level") === "1" && carts.length != 0 ? (
+                        <div className="col-md-2">
+                            <button className="btn btn-primary me-md-2 movil-add" type="button" onClick={openModal} disabled >
+                                <i className="fas fa-plus"></i>Agregar
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="col-md-2">
+                            <button className="btn btn-primary me-md-2 movil-add" type="button" onClick={openModal} >
+                                <i className="fas fa-plus"></i>Agregar
+                            </button>
+                        </div>
+                    )
+                }
             </div>
 
-            <div className="row">
+            <div className="row mt-3">
                 <div id="escritorioUsers" className="col-md-12">
                     <table className="table table-striped table-hover">
                         <thead>
@@ -366,7 +498,7 @@ const Vehicles = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {
+                            {carts.length > 0 ? (
                                 carts.map((vehicle) => (
                                     <tr key={vehicle.id}>
                                         <td className="tdImg"><button className="btnAbrirImg" onClick={() => { openImage(vehicle.imagen) }}><img className="imgCocheMini" src={from64(vehicle.imagen)} /></button></td>
@@ -410,70 +542,84 @@ const Vehicles = () => {
                                         </td>
                                     </tr>
                                 ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="11" className="text-center">No hay vehiculos activos por aquí.
+                                        <br></br>
+                                        <td><i className="fa-solid fa-car-burst" style={{ fontSize: '5.3em', marginLeft: '520%' }}></i></td>
+                                    </td>
+                                </tr>
+                            )
                             }
                         </tbody>
                     </table>
                 </div>
                 {/*Creamos cards para la versión movil*/}
                 <div id="movilUsers" className="col-md-12">
-                    {carts.map((carCard) => (
-                        <div className="card mb-3" key={carCard.id}>
-                            <div className="row no-gutters">
-                                <div className="col-md-4">
-                                    <figure className="text-center">
-                                        {carCard.imagen ? (
-                                            <img className="img-fluid imgCart" src={from64(carCard.imagen)} alt="Car" />
-                                        ) : (
-                                            <img className="img-fluid imgCart" src="/img/coche.png" alt="Default Car" />
-                                        )}
-                                    </figure>
-                                </div>
-                                <div className="col-md-8">
-                                    <div className="card-body">
-                                        <h5 className="card-title">{carCard.marca} - {carCard.modelo}</h5>
-                                        <div className="row">
-                                            <div className="col-6">
-                                                <p className="card-text">
-                                                    <strong>Placas: </strong>{carCard.placas}<br />
-                                                    <strong>Tipo: </strong>{carCard.tipo}<br />
-                                                    <strong>Combustible: </strong>{carCard.combustible}<br />
-                                                    <strong>Kilometraje: </strong>{carCard.kilometrajeRegistro} KM
-                                                </p>
-                                            </div>
-                                            <div className="col-6">
-                                                <p className="card-text">
-                                                    <strong>Principal: </strong>{carCard.Usuario.nombre} {carCard.Usuario.apePaterno} {carCard.Usuario.apeMaterno}<br />
-                                                    <strong>Compartido: </strong>
-                                                    {carCard.comparteCon !== "" ? (
-                                                        <div>
-                                                            {carCard.comparteCon}<br />
-                                                        </div>
-                                                    ) : (
-                                                        <div>
-                                                            No compartido<br />
-                                                        </div>
-                                                    )}
+                    {carts.length > 0 ? (
+                        carts.map((carCard) => (
+                            <div className="card mb-3" key={carCard.id}>
+                                <div className="row no-gutters">
+                                    <div className="col-md-4">
+                                        <figure className="text-center">
+                                            {carCard.imagen ? (
+                                                <img className="img-fluid imgCart" src={from64(carCard.imagen)} alt="Car" />
+                                            ) : (
+                                                <img className="img-fluid imgCart" src="/img/coche.png" alt="Default Car" />
+                                            )}
+                                        </figure>
+                                    </div>
+                                    <div className="col-md-8">
+                                        <div className="card-body">
+                                            <h5 className="card-title">{carCard.marca} - {carCard.modelo}</h5>
+                                            <div className="row">
+                                                <div className="col-6">
+                                                    <p className="card-text">
+                                                        <strong>Placas: </strong>{carCard.placas}<br />
+                                                        <strong>Tipo: </strong>{carCard.tipo}<br />
+                                                        <strong>Combustible: </strong>{carCard.combustible}<br />
+                                                        <strong>Kilometraje: </strong>{carCard.kilometrajeRegistro} KM
+                                                    </p>
+                                                </div>
+                                                <div className="col-6">
+                                                    <p className="card-text">
+                                                        <strong>Principal: </strong>{carCard.Usuario.nombre} {carCard.Usuario.apePaterno} {carCard.Usuario.apeMaterno}<br />
+                                                        <strong>Compartido: </strong>
+                                                        {carCard.comparteCon !== "" ? (
+                                                            <div>
+                                                                {carCard.comparteCon}<br />
+                                                            </div>
+                                                        ) : (
+                                                            <div>
+                                                                No compartido<br />
+                                                            </div>
+                                                        )}
 
-                                                </p>
+                                                    </p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="row mt-3">
-                                            <div className="col-6">
-                                                <button className="btn btn-success w-100" onClick={() => modifyModal(carCard.id)}>
-                                                    <i className="fas fa-edit"></i> Editar
-                                                </button>
-                                            </div>
-                                            <div className="col-6">
-                                                <button className="btn btn-danger w-100" onClick={() => deleteUser(carCard.id)}>
-                                                    <i className="fas fa-trash-alt"></i> Eliminar
-                                                </button>
+                                            <div className="row mt-3">
+                                                <div className="col-6">
+                                                    <button className="btn btn-success w-100" onClick={() => modifyModal(carCard.id)}>
+                                                        <i className="fas fa-edit"></i> Editar
+                                                    </button>
+                                                </div>
+                                                <div className="col-6">
+                                                    <button className="btn btn-danger w-100" onClick={() => deleteUser(carCard.id)}>
+                                                        <i className="fas fa-trash-alt"></i> Eliminar
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        ))) : (
+                        <div className="alert alert-warning" role="alert">
+                            No hay vehiculos activos por aquí.
+                            <i className="fa-solid fa-car-burst" style={{ fontSize: '5.3em', marginLeft: '520%' }}></i>
                         </div>
-                    ))}
+                    )}
                 </div>
 
             </div>

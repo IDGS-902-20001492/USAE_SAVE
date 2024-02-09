@@ -210,6 +210,21 @@ export const Users = () => {
         });
     };
 
+    const handleSwitch = () => {
+        const permiso = document.getElementById("permiso").checked;
+        if (permiso) {
+            setNewUser({
+                ...newUser,
+                permiso: 2
+            });
+        } else {
+            setNewUser({
+                ...newUser,
+                permiso: 1
+            });
+        }
+    }
+
     const openModal = () => {
         setShowModal(true);
         setModify(false);
@@ -222,7 +237,18 @@ export const Users = () => {
         try {
             const res = await fetch(`/api/Usuarios/${id}`);
             const data = await res.json();
+            if (data.permiso === 2) {
+                data.permiso = true;
+            } else {
+                data.permiso = false;
+            }
             setNewUser(data);
+
+            if (data.permiso) {
+                document.getElementById("permiso").checked = true;
+            } else {
+                document.getElementById("permiso").checked = false;
+            }
         } catch (error) {
             console.log(error);
         }
@@ -249,7 +275,7 @@ export const Users = () => {
     };
 
     return (
-        <div className="fluid-content noS">
+        <div className="fluid-content noS fade-in">
             <h1 className="text-center text-white"><i className="fas fa-users"></i> Usuarios</h1>
             <div className="row">
                 <div className="col-md-10">
@@ -443,6 +469,15 @@ export const Users = () => {
                                 <div className="col-8 mb-3">
                                     <label htmlFor="centroTrabajo" className="form-label">Centro de Trabajo</label>
                                     <input type="text" className="form-control" id="centroTrabajo" name="centroTrabajo" value={newUser.centroTrabajo} onChange={handleInputChange} />
+                                </div>
+                            </div>
+                            <div className="row">
+                                {/*Switch para otorgar permiso de administrador*/}
+                                <div className="col-6">
+                                    <label htmlFor="permiso" className="form-label">Permiso de Administrador</label>
+                                    <div className="form-check form-switch">
+                                        <input className="form-check-input" type="checkbox" id="permiso" name="permiso" value={newUser.permiso} onChange={handleSwitch} />
+                                    </div>
                                 </div>
                             </div>
                             <div className="row">

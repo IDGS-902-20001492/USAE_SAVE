@@ -1,0 +1,34 @@
+.titulo_1 {
+    color: white;
+    text-shadow: 2px 2px 4px #000000;
+}
+
+.subtitulo_1 {
+    color: white;
+    text-shadow: 2px 2px 4px #000000;
+}
+
+.card-header i {
+    font-size: 10em;
+}
+
+.tj-p {
+    text-align: justify;
+}
+
+/* TuComponente.css */
+
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

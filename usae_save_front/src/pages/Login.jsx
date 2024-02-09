@@ -29,7 +29,21 @@ export const Login = () => {
                 console.log(error);
             }).then((response) => {
                 if (response.status === 200) {
-                    window.location.href = "/users";
+                    response.json().then((data) => {
+                        localStorage.setItem("auth", true);
+                        localStorage.setItem("id", data.id);
+                        localStorage.setItem("level", data.permiso);
+                        localStorage.setItem("fullname", data.nombre + " " + data.apePaterno + " " + data.apeMaterno);
+                        //Damos un time out para que se alcance a mostrar el mensaje de bienvenida                        
+                        mostrarSweetAlert("Bienvenido(a)", data.nombre + " " + data.apePaterno + " " + data.apeMaterno, "success");
+                        setTimeout(() => {
+                            if (data.permiso === "2") {
+                                window.location.href = "/users";
+                            } else {
+                                window.location.href = "/services";
+                            }
+                        }, 1600);
+                    });
                 } else {
                     //Si el error es 401, entonces el usuario no está registrado
                     if (response.status === 401 || response.status === 400 || response.status === 404) {
@@ -55,7 +69,7 @@ export const Login = () => {
     };
 
     return (
-        <div className="container-fluid">
+        <div className="container-fluid fade-in">
             <div className="row grad justify-content-center align-items-center min-vh-100">
                 <div className="col-md-6">
                     <div className="card">

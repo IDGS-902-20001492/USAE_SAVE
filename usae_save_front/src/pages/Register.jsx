@@ -67,9 +67,9 @@ export const Register = () => {
 
     return (
         <div>
-            <div className="container-fluid">
+            <div className="container-fluid fade-in">
                 <div className="row grad justify-content-center align-items-center min-vh-100">
-                    <div className="col-md-6 ">
+                    <div className="col-md-6 mt-3 ">
                         <div className="card">
                             <div className="card-body">
                                 <h1 className="text-center">Registro</h1>

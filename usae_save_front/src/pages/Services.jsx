@@ -41,7 +41,12 @@ export const Services = () => {
         try {
             const res = await fetch("/api/Servicios");
             const data = await res.json();
-            setServices(data);
+            if (localStorage.getItem("level") === "2") {
+                setServices(data);
+            } else {
+                const serv = data.filter((serv) => serv.Vehiculo.Usuario.id === parseInt(localStorage.getItem("id")));
+                setServices(serv);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -229,7 +234,12 @@ export const Services = () => {
                 let res = await fetch(`/api/Servicios/Search?id=${0}&&orden=${orden}`);
                 let data = await res.json();
                 setLabelOrder("Servicios más antiguos");
-                setServices(data);
+                if (localStorage.getItem("level") === "2") {
+                    setServices(data);
+                } else {
+                    const data = services.filter((serv) => serv.Vehiculo.Usuario.id_usuario === parseInt(localStorage.getItem("id")));
+                    setServices(data);
+                }
             } else {
                 filterService();
             }
@@ -238,7 +248,12 @@ export const Services = () => {
                 let res = await fetch(`/api/Servicios/Search?id=${0}&&orden=${orden}`);
                 let data = await res.json();
                 setLabelOrder("Servicios más recientes");
-                setServices(data);
+                if (localStorage.getItem("level") === "2") {
+                    setServices(data);
+                } else {
+                    const data = services.filter((serv) => serv.Vehiculo.Usuario.id_usuario === parseInt(localStorage.getItem("id")));
+                    setServices(data);
+                }
             } else {
                 filterService();
             }
@@ -275,6 +290,16 @@ export const Services = () => {
         setNewService({
             ...newService,
             [name]: value,
+        });
+    };
+
+    const handleSelectChange = (e) => {
+        const { value } = e.target;
+        const kilometraje = encontrarKilometraje(value);
+        setNewService({
+            ...newService,
+            id_vehiculo: value,
+            kilometrajeServicio: kilometraje
         });
     };
 
@@ -317,26 +342,38 @@ export const Services = () => {
         });
     };
 
+    const encontrarKilometraje = (id) => {
+        const vehiculo = vehicles.find((veh) => veh.id === parseInt(id));
+        return vehiculo.kilometrajeRegistro;
+    }
+
     const sortDate = (fecha) => {
         //Cortamos la hora de un datetime
         return fecha.slice(0, 10);
     }
 
     return (
-        <div className="fluid-content noS">
+        <div className="fluid-content noS fade-in">
             <h1 className="text-center text-white"><i className="fa-solid fa-screwdriver-wrench"></i> Servicios</h1>
             <div className="row">
                 <div className="col-4 user-select">
-                    <div className="input-group mb-3">
-                        <select className="form-select" aria-label="Default select example" id="buscar" onChange={filterService}>
-                            <option defaultValue>Filtrar por persona</option>
-                            {
-                                users.map((user) => (
-                                    <option key={user.id} value={user.id}>{user.nombre} {user.apePaterno} {user.apeMaterno}</option>
-                                ))
-                            }
-                        </select>
-                    </div>
+                    {
+                        localStorage.getItem("level") === "2" ? (
+                            <div className="input-group mb-3">
+                                <select className="form-select" aria-label="Default select example" id="buscar" onChange={filterService}>
+                                    <option defaultValue>Filtrar por persona</option>
+                                    {
+                                        users.map((user) => (
+                                            <option key={user.id} value={user.id}>{user.nombre} {user.apePaterno} {user.apeMaterno}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                        ) : (
+                            <></>
+                        )
+                    }
+
                 </div>
                 <div className="col-2 sw-mobile">
                     <div className="row ms-1">
@@ -401,38 +438,47 @@ export const Services = () => {
                         </thead>
                         <tbody>
                             {
-                                services.map((serv) => (
-                                    <tr key={serv.id}>
-                                        <td>{sortDate(serv.fechaProgramada)}</td>
-                                        <td>{serv.kilometrajeServicio} km</td>
-                                        <td>{serv.tipoServicio}</td>
-                                        <td>{serv.ubicacionServicio}</td>
-                                        <td>{serv.mecanico}</td>
-                                        <td>{serv.descripcion}</td>
-                                        <td>${serv.presupuesto}</td>
-                                        <td>{serv.Vehiculo.modelo}</td>
-                                        <td>{serv.Vehiculo.Usuario.nombre} {serv.Vehiculo.Usuario.apePaterno} {serv.Vehiculo.Usuario.apeMaterno}</td>
-                                        <td>
-                                            <button className="btn btn-success" onClick={
-                                                () => {
-                                                    modifyModal(serv.id);
-                                                }
-                                            }>
-                                                <i className="fas fa-edit"></i>
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <button className="btn btn-danger"
-                                                onClick={
+                                services.length > 0 ? (
+                                    services.map((serv) => (
+                                        <tr key={serv.id}>
+                                            <td>{sortDate(serv.fechaProgramada)}</td>
+                                            <td>{serv.kilometrajeServicio} km</td>
+                                            <td>{serv.tipoServicio}</td>
+                                            <td>{serv.ubicacionServicio}</td>
+                                            <td>{serv.mecanico}</td>
+                                            <td>{
+                                                serv.descripcion === null ? "Sin descripción" : serv.descripcion
+                                            }</td>
+                                            <td>${serv.presupuesto}</td>
+                                            <td>{serv.Vehiculo.modelo}</td>
+                                            <td>{serv.Vehiculo.Usuario.nombre} {serv.Vehiculo.Usuario.apePaterno} {serv.Vehiculo.Usuario.apeMaterno}</td>
+                                            <td>
+                                                <button className="btn btn-success" onClick={
                                                     () => {
-                                                        deleteService(serv.id);
+                                                        modifyModal(serv.id);
                                                     }
                                                 }>
-                                                <i className="fas fa-trash-alt"></i>
-                                            </button>
-                                        </td>
+                                                    <i className="fas fa-edit"></i>
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button className="btn btn-danger"
+                                                    onClick={
+                                                        () => {
+                                                            deleteService(serv.id);
+                                                        }
+                                                    }>
+                                                    <i className="fas fa-trash-alt"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="11" className="text-center"><i className="fas fa-exclamation-triangle"></i>No hay servicios registrados para esa fecha ó persona.</td>
                                     </tr>
-                                ))
+                                )
+
                             }
                         </tbody>
                     </table>
@@ -480,7 +526,9 @@ export const Services = () => {
 
                                     <div className="row mt-2">
                                         <div className="col-12">
-                                            <p className="card-text"><b>Descripción:</b> {serv.descripcion}</p>
+                                            <p className="card-text"><b>Descripción:</b> {
+                                                serv.descripcion === null ? "Sin descripción" : serv.descripcion
+                                            }</p>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -529,13 +577,26 @@ export const Services = () => {
                         </div>
                         <div className="modal-body">
                             {/* Formulario */}
+                            <div className="row mb-3">
+                                <div className="col-12">
+                                    <label htmlFor="id_vehiculo" className="form-label">Vehículo</label>
+                                    <select className="form-select" aria-label="Default select example" name="id_vehiculo" id="id_vehiculo" value={newService.id_vehiculo} onChange={handleSelectChange}>
+                                        <option defaultValue>Selecciona una opción</option>
+                                        {
+                                            vehicles.map((vehicle) => (
+                                                <option key={vehicle.id} value={vehicle.id}>{vehicle.modelo} - {vehicle.Usuario.nombre} {vehicle.Usuario.apePaterno} {vehicle.Usuario.apeMaterno}</option>
+                                            ))
+                                        }
+                                    </select>
+                                </div>
+                            </div>
                             <div className="row">
                                 <div className="col-5 mb-3">
                                     <label htmlFor="fechaProgramada" className="form-label">Fecha Programada</label>
                                     <input type="date" className="form-control" id="fechaProgramada" name="fechaProgramada" value={newService.fechaProgramada} onChange={handleInputChange} />
                                 </div>
                                 <div className="col-4 mb-3">
-                                    <label htmlFor="kilometrajeServicio" className="form-label ka">Kilometraje Actual</label>
+                                    <label htmlFor="kilometrajeServicio" className="form-label ka">Kilom. de Servicio</label>
                                     <input type="number" className="form-control" id="kilometrajeServicio" name="kilometrajeServicio" value={newService.kilometrajeServicio} onChange={handleInputChange} />
                                 </div>
                                 <div className="col-3 mb-4">
@@ -570,19 +631,7 @@ export const Services = () => {
                                     <textarea className="form-control" id="descripcion" name="descripcion" value={newService.descripcion} onChange={handleInputChange} />
                                 </div>
                             </div>
-                            <div className="row">
-                                <div className="col-12">
-                                    <label htmlFor="contrasena" className="form-label">Vehículo</label>
-                                    <select className="form-select" aria-label="Default select example" name="id_vehiculo" value={newService.id_vehiculo} onChange={handleInputChange}>
-                                        <option defaultValue>Selecciona una opción</option>
-                                        {
-                                            vehicles.map((vehicle) => (
-                                                <option key={vehicle.id} value={vehicle.id}>{vehicle.modelo} - {vehicle.Usuario.nombre} {vehicle.Usuario.apePaterno} {vehicle.Usuario.apeMaterno}</option>
-                                            ))
-                                        }
-                                    </select>
-                                </div>
-                            </div>
+
                             <div className="row">
                                 <div className="col-12">
                                     <div id="mapa"></div>
