@@ -35,6 +35,70 @@ namespace save_apiv0.Controllers
             return Ok(historial);
         }
 
+        //GET para obtener los historiales agrupados por vehiculo
+        // GET: api/Historiales/GetByGroup/5
+        [HttpGet]
+        [Route("api/Historiales/GetByGroup")]
+        public IQueryable GetByGroup()
+        {
+            //Retornamos los historiales agrupados por vehiculo
+            var resultados = db.Historial.GroupBy(x => x.id_vehiculo).Select(x => new { idVehiculo = x.Key, historiales = x });
+            //Quitamos los nulos de los servicios y reparaciones
+            foreach (var item in resultados)
+            {
+                foreach (var historial in item.historiales)
+                {
+                    if (historial.id_reparacion == null)
+                    {
+                        historial.Reparacion = new Reparacion();
+                    }
+                    if (historial.id_servicio == null)
+                    {
+                        historial.Servicio = new Servicio();
+                    }
+                }
+            }
+            return resultados;
+        }
+
+
+        //GET para obtener los historiales de un vehiculo
+        //GET: api/Historiales/GetByCar/5
+        [HttpGet]
+        [Route("api/Historiales/GetByCar/{id}")]
+        public IHttpActionResult GetByCar(int id)
+        {
+            try
+            {
+                //Obtener los historiales de un vehiculo
+                var resultados = db.Historial
+                    .Where(x => x.id_vehiculo == id)
+                    .ToList();
+
+                // Verificar si hay historiales para el vehículo
+                if (resultados.Count == 0)
+                {
+                    return NotFound(); // Devolver 404 si no hay historiales
+                }
+
+                // Crear un objeto para almacenar el resultado final
+                var resultadoFinal = new
+                {
+                    id_vehiculo = id,
+                    servicios = resultados.Where(h => h.id_servicio != null).Select(h => h.Servicio).ToList(),
+                    reparaciones = resultados.Where(h => h.id_reparacion != null).Select(h => h.Reparacion).ToList()
+                };
+
+                return Ok(resultadoFinal);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex); // Devolver 500 en caso de error
+            }
+        }
+
+
+
         // PUT: api/Historiales/5
         [ResponseType(typeof(void))]
         public IHttpActionResult PutHistorial(int id, Historial historial)

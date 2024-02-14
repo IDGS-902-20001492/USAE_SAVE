@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -134,6 +135,29 @@ namespace save_apiv0.Controllers
 
                 // Actualiza el resto de los campos de la reparación
                 db.Entry(reparacionExistente).CurrentValues.SetValues(reparacion);
+
+                try
+                {
+                    //si el historial no existe, lo creamos
+                    var historial = db.Historial.Where(x => x.id_reparacion == reparacion.id).FirstOrDefault();
+                    if (historial == null)
+                    {
+                        Historial nuevoHistorial = new Historial();
+                        nuevoHistorial.id_reparacion = reparacion.id;
+                        nuevoHistorial.id_vehiculo = reparacion.id_vehiculo;
+                        db.Historial.Add(nuevoHistorial);
+                    }
+                    else
+                    {
+                        historial.id_vehiculo = reparacion.id_vehiculo;
+                        db.Entry(historial).State = EntityState.Modified;
+                    }
+                }catch(Exception e)
+                {
+                    return BadRequest(e.Message);
+                }
+
+
                 db.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
@@ -168,6 +192,13 @@ namespace save_apiv0.Controllers
             }
 
             db.Reparacion.Add(reparacion);
+
+            //Guardamos la reparación en el historial
+            Historial historial = new Historial();
+            historial.id_reparacion = reparacion.id;
+            historial.id_vehiculo = reparacion.id_vehiculo;
+            db.Historial.Add(historial);
+
             db.SaveChanges();
 
             return CreatedAtRoute("DefaultApi", new { id = reparacion.id }, reparacion);
@@ -188,7 +219,27 @@ namespace save_apiv0.Controllers
             db.Entry(reparacion).State = EntityState.Modified;
             db.SaveChanges();
 
-            return Ok(reparacion);
+            try
+            {
+                //si el historial existe , lo eliminamos
+                var historial = db.Historial.Where(x => x.id_reparacion == id).FirstOrDefault();
+                Debug.WriteLine(historial.id_reparacion);
+                if (historial != null)
+                {
+                    db.Historial.Remove(historial);
+                    db.SaveChanges();
+                    return Ok(reparacion);
+                }
+                else
+                {
+                    return BadRequest("El historial no existe");
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            
         }
 
         protected override void Dispose(bool disposing)

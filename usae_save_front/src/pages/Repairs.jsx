@@ -194,7 +194,11 @@ export const Repairs = () => {
 
     const sortDate = (fecha) => {
         //Cortamos la hora de un datetime
-        return fecha.slice(0, 10);
+        if (fecha === null) {
+            return "Sin fecha";
+        } else {
+            return fecha.slice(0, 10);
+        }
     }
 
     const changeRepairStatus = async (id) => {
@@ -320,7 +324,9 @@ export const Repairs = () => {
             const res = await fetch(`/api/Reparaciones/${id}`);
             const data = await res.json();
             data.fecha = data.fecha.slice(0, 10);
-            data.fechaFin = data.fechaFin.slice(0, 10);
+            if (data.fechaFin !== null) {
+                data.fechaFin = data.fechaFin.slice(0, 10);
+            }
             setNewRepair(data);
         } catch (error) {
             console.log(error);

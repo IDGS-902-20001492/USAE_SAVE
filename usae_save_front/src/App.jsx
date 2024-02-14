@@ -12,6 +12,7 @@ import { Home } from "./pages/Home";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import Histories from "./pages/Histories";
+import ShowHistory from "./components/ShowHistory";
 function App() {
 
   const [auth, setAuth] = useState(false);
@@ -90,9 +91,9 @@ function App() {
                             <li className="nav-item">
                               <Link to="/repairs" className="nav-link">Reparaciones</Link>
                             </li>
-                            {/*<li className="nav-item">
+                            <li className="nav-item">
                               <Link to="/histories" className="nav-link">Historial</Link>
-                        </li>*/}
+                            </li>
                             <li className="nav-item">
                               <Link className="nav-link" onClick={() => {
                                 cerrarSesion();
@@ -113,10 +114,9 @@ function App() {
                             <li className="nav-item">
                               <Link to="/repairs" className="nav-link">Reparaciones</Link>
                             </li>
-                            {/*
                             <li className="nav-item">
                               <Link to="/histories" className="nav-link">Historiales</Link>
-                        </li>*/}
+                            </li>
                             <li className="nav-item">
                               <Link className="nav-link" onClick={() => {
                                 cerrarSesion();
@@ -163,6 +163,7 @@ function App() {
           <Route path="/services" element={auth ? <Services /> : <Home />} />
           <Route path="/repairs" element={auth ? <Repairs /> : <Home />} />
           <Route path="/histories" element={auth ? <Histories /> : <Home />} />
+          <Route path="/histories/:id" element={auth ? <ShowHistory /> : <Home />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web.Helpers;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Microsoft.Ajax.Utilities;
 using save_apiv0.Models;
 
 namespace save_apiv0.Controllers
@@ -141,6 +144,32 @@ namespace save_apiv0.Controllers
 
                 // Actualiza el resto de los campos del servicio
                 db.Entry(servicioExistente).CurrentValues.SetValues(servicio);
+
+                //Actualizamos el historial
+                try
+                {
+                    //Si el historial no existe, lo creamos
+                    if (db.Historial.Where(x => x.id_servicio == servicio.id).Count() == 0)
+                    {
+                        Historial historial = new Historial();
+                        historial.id_servicio = servicio.id;
+                        historial.id_vehiculo = servicio.id_vehiculo;
+                        db.Historial.Add(historial);
+                    }
+                    else
+                    {
+                        //Si el historial existe, lo actualizamos
+                        Historial historial = db.Historial.Where(x => x.id_servicio == servicio.id).First();
+                        historial.id_vehiculo = servicio.id_vehiculo;
+                        db.Entry(historial).State = EntityState.Modified;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(e.Message);
+                }
+
                 db.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
@@ -175,6 +204,14 @@ namespace save_apiv0.Controllers
             }
 
             db.Servicio.Add(servicio);
+            
+
+            //Guardamos el servicio en el historial
+            Historial historial = new Historial();
+            historial.id_servicio = servicio.id;
+            historial.id_vehiculo = servicio.id_vehiculo;
+            db.Historial.Add(historial);
+
             db.SaveChanges();
 
             return CreatedAtRoute("DefaultApi", new { id = servicio.id }, servicio);
@@ -195,7 +232,27 @@ namespace save_apiv0.Controllers
             db.Entry(servicio).State = EntityState.Modified;
             db.SaveChanges();
 
-            return Ok(servicio);
+            try
+            {
+                //Si el servicio existe en el historial, lo eliminamos
+                if (db.Historial.Where(x => x.id_servicio == id).Count() > 0)
+                {
+                    Historial historial = db.Historial.Where(x => x.id_servicio == id).First();
+                    db.Historial.Remove(historial);
+                    db.SaveChanges();
+
+                    return Ok(servicio);
+                }
+                else
+                {
+                    return BadRequest("El servicio no existe en el historial");
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            
         }
 
         protected override void Dispose(bool disposing)
