@@ -101,6 +101,7 @@ const ShowHistory = () => {
         return totalReparaciones;
     }
 
+
     useEffect(() => {
         getServicesAndRepairs();
         getCarAttributes();
@@ -108,7 +109,6 @@ const ShowHistory = () => {
 
     return (
         <div className="container-fluid fade-in">
-            {/*Mostramos 2 tablas una de servicios y otra de reparaciones*/}
             <div className="row mt-3 mb-2 text-center">
                 <div className="col-2">
                     <Link to="/histories"
@@ -125,7 +125,7 @@ const ShowHistory = () => {
                     {
                         searched === false ? (
                             <>
-                                <div className="col-4">
+                                <div className="col-md-4 mb-2">
                                     {
                                         <select className="form-select" aria-label="Default select example" id="mes" disabled>
                                             <option value="0">Selecciona un mes</option>
@@ -145,7 +145,7 @@ const ShowHistory = () => {
                                     }
                                 </div>
                                 {/*Select para seleccionar año*/}
-                                <div className="col-4">
+                                <div className="col-md-4 mb-2">
                                     <select className="form-select" aria-label="Default select example" id="anio" onChange={handleSelect}>
                                         <option value="0">Selecciona un año</option>
                                         <option value="2022">2022</option>
@@ -159,7 +159,7 @@ const ShowHistory = () => {
                                         <option value="2030">2030</option>
                                     </select>
                                 </div>
-                                <div className="col-4">
+                                <div className="col-md-4 mb-2">
                                     <button className="btn btn-primary" onClick={() => {
                                         const mes = document.getElementById("mes").value;
                                         const anio = document.getElementById("anio").value;
@@ -178,10 +178,24 @@ const ShowHistory = () => {
                         )
                     }
                 </div>
+                {/*
+                <div className="row switchRS_mobile">                    
+                    <div className="col-md-6">
+                        <div className="form-check form-switch fs-3">
+                            <input className="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
+                                onChange={switchView}
+                            />
+                            <label className="form-check-label text-white" htmlFor="flexSwitchCheckDefault">{
+                                watchServices === false ? "Ver reparaciones" : "Ver servicios"
+                            }</label>
+                        </div>
+                    </div>
+                </div>
+                */}
                 <div className="row">
-                    <div className="col-6">
+                    <div className="col-md-6 servicesView tabMovil">
                         <h3 className="text-white">Servicios</h3>
-                        <table className="table table-striped table-bordered">
+                        <table className="table table-striped table-bordered p-2">
                             <thead>
                                 <tr>
                                     <th>Fecha</th>
@@ -216,13 +230,13 @@ const ShowHistory = () => {
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colSpan="3">Presupuesto total: </td>
-                                    <td>${calculateBudgetServices()}</td>
+                                    <td colSpan="3"><b>Presupuesto total: </b></td>
+                                    <td><b>${calculateBudgetServices()}</b></td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
-                    <div className="col-6">
+                    <div className="col-md-6 repairsView tabMovil2">
                         <h3 className="text-white">Reparaciones</h3>
                         <table className="table table-striped table-bordered">
                             <thead>
@@ -261,8 +275,8 @@ const ShowHistory = () => {
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colSpan="4">Presupuesto total: </td>
-                                    <td>${calculateBudgetRepairs()}</td>
+                                    <td colSpan="4"><b>Presupuesto total:</b> </td>
+                                    <td><b>${calculateBudgetRepairs()}</b></td>
                                 </tr>
                             </tfoot>
                         </table>

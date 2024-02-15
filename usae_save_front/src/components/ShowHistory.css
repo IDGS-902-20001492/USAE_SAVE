@@ -1,0 +1,30 @@
+.switchRS_mobile {
+    display: none;
+}
+
+.repairsView {
+    display: block;
+}
+
+.servicesView {
+    display: block;
+}
+
+/*Media queries para moviles*/
+@media (max-width: 768px) {
+    .switchRS_mobile {
+        display: flex;
+        justify-content: center;
+    }
+
+    /*Disminuimos la escala de las tablas*/
+    .tabMovil {
+        transform: scale(0.9);
+        margin-left: -5%;
+    }
+
+    .tabMovil2 {
+        transform: scale(0.84);
+        margin-left: -8%;
+    }
+}
