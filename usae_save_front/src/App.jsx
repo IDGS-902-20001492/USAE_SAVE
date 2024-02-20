@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import Histories from "./pages/Histories";
 import ShowHistory from "./components/ShowHistory";
+import Dashboard from "./pages/Dashboard";
 function App() {
 
   const [auth, setAuth] = useState(false);
@@ -118,6 +119,9 @@ function App() {
                               <Link to="/histories" className="nav-link">Historiales</Link>
                             </li>
                             <li className="nav-item">
+                              <Link to="/dashboard" className="nav-link">Dashboard</Link>
+                            </li>
+                            <li className="nav-item">
                               <Link className="nav-link" onClick={() => {
                                 cerrarSesion();
                               }}>Cerrar Sesión</Link>
@@ -164,6 +168,7 @@ function App() {
           <Route path="/repairs" element={auth ? <Repairs /> : <Home />} />
           <Route path="/histories" element={auth ? <Histories /> : <Home />} />
           <Route path="/histories/:id" element={auth ? <ShowHistory /> : <Home />} />
+          <Route path="/dashboard" element={auth && localStorage.getItem("level") === "2" ? <Dashboard /> : <Login />} />
         </Routes>
       </BrowserRouter>
     </>
