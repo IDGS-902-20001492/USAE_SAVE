@@ -235,7 +235,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Historial.cs" />
-    <Compile Include="Models\Model1.cs" />
+    <Compile Include="Models\HistorialKilometraje.cs" />
+    <Compile Include="Models\Model4.cs" />
     <Compile Include="Models\Pieza.cs" />
     <Compile Include="Models\Reparacion.cs" />
     <Compile Include="Models\Servicio.cs" />

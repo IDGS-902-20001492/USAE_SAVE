@@ -5,13 +5,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Description;
 using System.Web.Mvc;
 
 namespace save_apiv0.Controllers
 {
     public class DashboardController : ApiController
     {
-        private Model1 db = new Model1();
+        private Model4 db = new Model4();
 
         // GET: api/Dashboard/Presupuesto
         [System.Web.Http.HttpGet]
@@ -116,6 +117,76 @@ namespace save_apiv0.Controllers
             {
                 return BadRequest(e.Message);
             }
+        }
+
+        //Metodo get para obtener todos los HistorialesKilometraje
+        // GET: api/Dashboard/HistorialesKilometraje
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/Dashboard/HistorialesKilometraje")]
+        public IQueryable<HistorialKilometraje> GetHistorialKilometraje()
+        {
+            return db.HistorialKilometraje;
+        }
+
+        //Metodo get para obtener un historial a partir de su id
+        // GET: api/Dashboard/HistorialesKilometraje/5
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/Dashboard/HistorialesKilometraje/{id}")]
+        [ResponseType(typeof(HistorialKilometraje))]
+        public IHttpActionResult GetHistorialKilometraje(int id)
+        {
+            HistorialKilometraje historialKilometraje = db.HistorialKilometraje.Find(id);
+            if (historialKilometraje == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(historialKilometraje);
+        }
+
+
+        //Metodo para actualiza un historialKiometraje
+        // PUT: api/Dashboard/HistorialesKilometraje/5
+        [System.Web.Http.HttpPut]
+        [System.Web.Http.Route("api/Dashboard/HistorialesKilometraje/{id}")]
+        [ResponseType(typeof(void))]
+        public IHttpActionResult PutHistorialKilometraje(int id, HistorialKilometraje historialKilometraje)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != historialKilometraje.id)
+            {
+                return BadRequest();
+            }
+
+            db.Entry(historialKilometraje).State = System.Data.Entity.EntityState.Modified;
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                if (!HistorialKilometrajeExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return BadRequest(e.Message);
+                }
+            }
+
+            return StatusCode(System.Net.HttpStatusCode.NoContent);
+        }
+
+        //Metodo para detectar si un historialKilometraje existe
+        private bool HistorialKilometrajeExists(int id)
+        {
+            return db.HistorialKilometraje.Count(e => e.id == id) > 0;
         }
 
     }

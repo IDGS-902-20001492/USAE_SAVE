@@ -89,6 +89,11 @@ export const Users = () => {
 
     const editUser = async () => {
         try {
+            if (newUser.permiso === true || document.getElementById("permiso").checked === true) {
+                newUser.permiso = 2;
+            } else {
+                newUser.permiso = 1;
+            }
             await fetch(`/api/Usuarios/${newUser.id}`, {
                 method: "PUT",
                 headers: {
@@ -210,9 +215,9 @@ export const Users = () => {
         });
     };
 
-    const handleSwitch = () => {
-        const permiso = document.getElementById("permiso").checked;
-        if (permiso) {
+    const handleSwitch = (e) => {
+        const permiso = e.target.checked;
+        if (permiso === true) {
             setNewUser({
                 ...newUser,
                 permiso: 2

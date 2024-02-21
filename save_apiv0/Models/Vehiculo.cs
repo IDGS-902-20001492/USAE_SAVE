@@ -14,6 +14,7 @@ namespace save_apiv0.Models
         public Vehiculo()
         {
             Historial = new HashSet<Historial>();
+            HistorialKilometraje = new HashSet<HistorialKilometraje>();
             Reparacion = new HashSet<Reparacion>();
             Servicio = new HashSet<Servicio>();
         }
@@ -52,6 +53,10 @@ namespace save_apiv0.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [JsonIgnore]
         public virtual ICollection<Historial> Historial { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [JsonIgnore]
+        public virtual ICollection<HistorialKilometraje> HistorialKilometraje { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [JsonIgnore]

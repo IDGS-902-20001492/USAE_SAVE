@@ -1,3 +1,17 @@
 .fluid-content {
     overflow-x: hidden;
 }
+
+/*Damos un efecto de hover a la clase hoverWarning*/
+.hoverWarning:hover {
+    background-color: #f2f2f2;
+    cursor: pointer;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    transform: scale(1.10);
+    transition: 0.3s;
+}
+
+/*Damos un efecto de in y out a la clase .alertAnimation*/
+.alertAnimation {
+    animation: fadeIn 3s ease-in-out infinite;
+}

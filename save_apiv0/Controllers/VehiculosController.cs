@@ -14,7 +14,7 @@ namespace save_apiv0.Controllers
 {
     public class VehiculosController : ApiController
     {
-        private Model1 db = new Model1();
+        private Model4 db = new Model4();
 
         // GET: api/Vehiculos
         public IQueryable<Vehiculo> GetVehiculo()
@@ -114,6 +114,67 @@ namespace save_apiv0.Controllers
 
                 // Actualiza el resto de los campos del vehículo
                 db.Entry(vehiculoExistente).CurrentValues.SetValues(vehiculo);
+                db.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!VehiculoExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        //Metodo para actualizar unicamente el kilometraje de un vehiculo
+        [HttpPut]
+        [Route("api/Vehiculos/UpdateKilometraje")]
+        public IHttpActionResult UpdateKilometraje(int id, int kilometraje)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                // Verifica si el vehículo existe
+                var vehiculoExistente = db.Vehiculo.Find(id);
+                if (vehiculoExistente == null)
+                {
+                    return NotFound();
+                }
+
+                //Si ya existe un registro con el id del vehiculo en HistorialKilometraje, lo actualizamos si no lo creamos
+                var historialKilometraje = db.HistorialKilometraje.Where(x => x.vehiculoID == id).FirstOrDefault();
+                if (historialKilometraje == null)
+                {
+                    HistorialKilometraje nuevoHistorial = new HistorialKilometraje();
+                    nuevoHistorial.vehiculoID = id;
+                    nuevoHistorial.kilometrajeAnterior = vehiculoExistente.kilometrajeRegistro;
+                    nuevoHistorial.kilometrajeNuevo = kilometraje;
+                    nuevoHistorial.fechaActualizacion = DateTime.Now;
+                    nuevoHistorial.visto = false;
+                    db.HistorialKilometraje.Add(nuevoHistorial);
+                }
+                else
+                {
+                    historialKilometraje.kilometrajeAnterior = vehiculoExistente.kilometrajeRegistro;
+                    historialKilometraje.kilometrajeNuevo = kilometraje;
+                    historialKilometraje.fechaActualizacion = DateTime.Now;
+                    historialKilometraje.visto = false;
+                    db.Entry(historialKilometraje).State = EntityState.Modified;
+                }
+
+                // Actualiza el kilometraje
+                vehiculoExistente.kilometrajeRegistro = kilometraje;
+
+                db.Entry(vehiculoExistente).State = EntityState.Modified;
                 db.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)

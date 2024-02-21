@@ -9,7 +9,7 @@ namespace save_apiv0.Controllers
 {
     public class LoginController : ApiController
     {
-        private Model1 db = new Model1();
+        private Model4 db = new Model4();
 
         //Autenticación de usuarios
         [HttpPost]

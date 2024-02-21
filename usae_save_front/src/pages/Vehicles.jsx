@@ -346,25 +346,15 @@ const Vehicles = () => {
             return;
         } else {
             try {
-                await fetch(`/api/Vehiculos/${cocheAsignado.id}`, {
+                //Haciendo un put con 2 parametros
+                await fetch(`/api/Vehiculos/UpdateKilometraje?id=${cocheAsignado.id}&kilometraje=${kilometraje}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({
-                        id: cocheAsignado.id,
-                        marca: cocheAsignado.marca,
-                        modelo: cocheAsignado.modelo,
-                        tipo: cocheAsignado.tipo,
-                        placas: cocheAsignado.placas,
-                        imagen: cocheAsignado.imagen,
-                        combustible: cocheAsignado.combustible,
-                        kilometrajeRegistro: kilometraje,
-                        comparteCon: cocheAsignado.comparteCon,
-                        id_usuario: cocheAsignado.id_usuario,
-                        estatus: "True",
-                    })
-                }).catch((error) => {
+                    body: JSON.stringify(cocheAsignado)
+                }
+                ).catch((error) => {
                     console.log(error);
                 }).then((response) => {
                     if (response.ok === true) {

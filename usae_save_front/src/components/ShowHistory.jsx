@@ -178,20 +178,6 @@ const ShowHistory = () => {
                         )
                     }
                 </div>
-                {/*
-                <div className="row switchRS_mobile">                    
-                    <div className="col-md-6">
-                        <div className="form-check form-switch fs-3">
-                            <input className="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
-                                onChange={switchView}
-                            />
-                            <label className="form-check-label text-white" htmlFor="flexSwitchCheckDefault">{
-                                watchServices === false ? "Ver reparaciones" : "Ver servicios"
-                            }</label>
-                        </div>
-                    </div>
-                </div>
-                */}
                 <div className="row">
                     <div className="col-md-6 servicesView tabMovil">
                         <h3 className="text-white">Servicios</h3>

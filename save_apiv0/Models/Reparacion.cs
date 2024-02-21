@@ -1,4 +1,3 @@
-
 namespace save_apiv0.Models
 {
     using Newtonsoft.Json;

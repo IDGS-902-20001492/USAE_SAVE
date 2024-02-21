@@ -23,8 +23,10 @@ namespace save_apiv0.Models
         public virtual Reparacion Reparacion { get; set; }
 
         public virtual Servicio Servicio { get; set; }
+
         [JsonIgnore]
         public virtual Usuario Usuario { get; set; }
+
         [JsonIgnore]
         public virtual Vehiculo Vehiculo { get; set; }
     }

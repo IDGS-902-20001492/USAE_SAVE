@@ -13,6 +13,7 @@ const DashboardGraphics = () => {
     const [budgetData, setBudgetData] = useState([]);
     const [maintenancesData, setMaintenancesData] = useState([]);
     const [mileageData, setMileageData] = useState([]);
+    const [mileageHistory, setMileageHistory] = useState([]);
 
     const getBudgetData = async () => {
         //Obtenemos el mes actual
@@ -55,10 +56,10 @@ const DashboardGraphics = () => {
         <>
             <div className='container-fluid fade-in'>
                 <div className="row">
-                    <div className="col-md-6 mb-3">
+                    <div className="col-md-4 mb-3">
                         <div className="card">
-                            <div className="card-header">
-                                <h5 className="text-center"><b>Presupuesto invertido mensual</b></h5>
+                            <div className='card-header'>
+                                <h5 className="text-center"><b>Presupuesto de este mes</b></h5>
                             </div>
                             <div className="card-body">
                                 <Bar
@@ -88,7 +89,7 @@ const DashboardGraphics = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-6 mb-3">
+                    <div className="col-md-4 mb-3">
                         <div className="card">
                             <div className="card-header">
                                 <h5 className="text-center"><b>Servicios y reparaciones de este mes</b></h5>
@@ -117,16 +118,20 @@ const DashboardGraphics = () => {
                                     }}
 
                                     options={{
-
+                                        indexAxis: 'y',
+                                        responsive: true,
+                                        plugins: {
+                                            legend: {
+                                                display: true
+                                            },
+                                        }
                                     }}
 
                                 />
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className="row mb-3">
-                    <div className="col-md-6 mb-3">
+                    <div className="col-md-4 mb-3">
                         <div className="card">
                             <div className="card-header">
                                 <h5 className="text-center"><b>Kilometraje de los vehículos</b></h5>
@@ -152,20 +157,12 @@ const DashboardGraphics = () => {
                                             legend: {
                                                 display: false
                                             },
-                                        }
+                                        },
+                                        indexAxis: 'y'
+
                                     }}
                                 />
                             </div>
-                        </div>
-                    </div>
-                    <div className="col-md-6 mb-3">
-                        <div className='row'>
-                            <div className="col-sm-3">
-                                <div className="card">a</div>
-                            </div>
-                            <div className="col-sm-3"></div>
-                            <div className="col-sm-3"></div>
-                            <div className="col-sm-3"></div>
                         </div>
                     </div>
                 </div>
