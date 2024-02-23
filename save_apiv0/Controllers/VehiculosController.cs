@@ -209,6 +209,24 @@ namespace save_apiv0.Controllers
             }
 
             db.Vehiculo.Add(vehiculo);
+
+
+            try
+            {
+                //Agregamos el historialKilometraje
+                HistorialKilometraje nuevoHistorial = new HistorialKilometraje();
+                nuevoHistorial.vehiculoID = vehiculo.id;
+                nuevoHistorial.kilometrajeAnterior = vehiculo.kilometrajeRegistro;
+                nuevoHistorial.kilometrajeNuevo = vehiculo.kilometrajeRegistro;
+                nuevoHistorial.fechaActualizacion = DateTime.Now;
+                nuevoHistorial.visto = false;
+                db.HistorialKilometraje.Add(nuevoHistorial);
+            } catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+
             db.SaveChanges();
 
             return CreatedAtRoute("DefaultApi", new { id = vehiculo.id }, vehiculo);

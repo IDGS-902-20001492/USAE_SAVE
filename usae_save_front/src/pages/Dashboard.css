@@ -13,5 +13,5 @@
 
 /*Damos un efecto de in y out a la clase .alertAnimation*/
 .alertAnimation {
-    animation: fadeIn 3s ease-in-out infinite;
+    animation: fadeIn 1.5s ease-in-out infinite;
 }

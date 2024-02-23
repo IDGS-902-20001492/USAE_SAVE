@@ -20,6 +20,28 @@ const Dashboard = () => {
         setMileageHistoryById(data);
     }
 
+    const changeSeenStatus = async (id) => {
+        //Primero buscamos el historial de kilometraje
+        const res = await fetch("api/Dashboard/HistorialesKilometraje/" + id);
+        const data = await res.json();
+
+        if (data.visto === false) {
+            //Cambiamos el estado de visto a true
+            data.visto = true;
+            //Actualizamos el historial de kilometraje
+            await fetch("api/Dashboard/HistorialesKilometraje/" + id, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            //Actualizamos el estado de la vista
+            getMileageHistory();
+        }
+    }
+
     const transformDate = (date) => {
         if (date) {
             const dateArray = date.split("T");
@@ -110,7 +132,9 @@ const Dashboard = () => {
                             <div className="modal-header">
                                 <h5 className="modal-title" id="exampleModalLabel">Actualizaciones sobre el vehiculo
                                 </h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                    onClick={changeSeenStatus(mileageHistoryById.id)}
+                                ></button>
                             </div>
                             <div className="modal-body">
                                 {
@@ -122,9 +146,19 @@ const Dashboard = () => {
                                             <p><b>Fecha de actualización: </b>{transformDate(mileageHistoryById.fechaActualizacion)}</p>
                                             {
                                                 calculateService(mileageHistoryById.kilometrajeAnterior, mileageHistoryById.kilometrajeNuevo) ? (
-                                                    <div className="alert alert-danger" role="alert">
-                                                        <i className="fas fa-exclamation-triangle"></i> <b>Se recomienda realizar un servicio</b>
-                                                    </div>
+                                                    <>
+                                                        {
+                                                            mileageHistoryById.kilometrajeAnterior !== mileageHistoryById.kilometrajeNuevo ? (
+                                                                <div className="alert alert-danger" role="alert">
+                                                                    <i className="fas fa-exclamation-triangle"></i> <b>Es necesario realizar un servicio</b>
+                                                                </div>
+                                                            ) : (<>
+                                                                <div className="alert alert-success" role="alert">
+                                                                    <i className="fas fa-check"></i> <b>No es necesario realizar un servicio</b>
+                                                                </div>
+                                                            </>)
+                                                        }
+                                                    </>
                                                 ) : (
                                                     <div className="alert alert-success" role="alert">
                                                         <i className="fas fa-check"></i> <b>No es necesario realizar un servicio</b>
@@ -136,7 +170,9 @@ const Dashboard = () => {
                                 }
                             </div>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={changeSeenStatus(
+                                    mileageHistoryById.id
+                                )} >Cerrar</button>
                             </div>
                         </div>
                     </div>
