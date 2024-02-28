@@ -10,17 +10,31 @@ const Histories = () => {
     const getCars = async () => {
         const res = await fetch("api/Vehiculos");
         const data = await res.json();
-        setCars(data);
+
+        if (localStorage.getItem("level") === "2") {
+            setCars(data);
+        } else {
+            //Filtramos los vehiculos que pertenecen al usuario mediante el id
+            let idUser = localStorage.getItem("id");
+            let carsUser = data.filter(car => car.Usuario.id === parseInt(idUser));
+            setCars(carsUser);
+        }
+
+
     }
 
     const findCar = async () => {
         const nombre = document.getElementById("buscar").value;
 
         try {
-            const res = await fetch(`/api/Vehiculos/Search?query=${nombre}`);
-            const data = await res.json();
-            setCars(data);
-            setSearched(true);
+            if (nombre === "") {
+                return;
+            } else {
+                const res = await fetch(`/api/Vehiculos/Search?query=${nombre}`);
+                const data = await res.json();
+                setCars(data);
+                setSearched(true);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -41,27 +55,43 @@ const Histories = () => {
         <div className="fluid-content fade-in">
             <div className="row text-center mt-3 mb-2">
                 <h1 className="text-white"><i className="fas fa-history"></i>
-                    Historiales</h1>
+                    {
+                        localStorage.getItem("level") === "1" ? (
+                            <>
+                                Historial
+                            </>
+                        ) : (
+                            <>
+                                Historiales
+                            </>
+                        )
+                    }</h1>
             </div>
-            <div className="row justify-content-center mb-2">
-                <div className="col-md-10">
-                    {/*Input para buscar y boton*/}
-                    <div className="input-group mb-3">
-                        <input type="text" className="form-control" placeholder="Buscar" aria-label="Recipient's username" id="buscar" aria-describedby="button-addon2" />
-                        {
-                            searched === false ? (
-                                <>
-                                    <button className="btn btn-success" type="button" id="button-addon2" onClick={findCar}>Buscar</button>
-                                </>
-                            ) : (
-                                <>
-                                    <button className="btn btn-secondary" type="button" id="button-addon2" onClick={clearSearch}>Limpiar</button>
-                                </>
-                            )
-                        }
+            {
+                localStorage.getItem("level") === "2" ? (
+                    <div className="row justify-content-center mb-2">
+                        <div className="col-md-10">
+                            {/*Input para buscar y boton*/}
+                            <div className="input-group mb-3">
+                                <input type="text" className="form-control" placeholder="Buscar" aria-label="Recipient's username" id="buscar" aria-describedby="button-addon2" />
+                                {
+                                    searched === false ? (
+                                        <>
+                                            <button className="btn btn-success" type="button" id="button-addon2" onClick={findCar}>Buscar</button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button className="btn btn-secondary" type="button" id="button-addon2" onClick={clearSearch}>Limpiar</button>
+                                        </>
+                                    )
+                                }
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                ) : (
+                    <></>
+                )
+            }
             <div className="container">
                 <div className="row">
                     {cars.map((car) => (

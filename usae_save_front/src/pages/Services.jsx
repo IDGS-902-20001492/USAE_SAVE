@@ -74,41 +74,54 @@ export const Services = () => {
 
     const addService = async () => {
         try {
-
-            await fetch("/api/Servicios", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(newService)
-            }).catch((error) => {
-                console.log(error);
-            }).then((response) => {
-                if (response.ok === true) {
-                    mostrarSweetAlert("Registro exitoso", "El servicio se registró correctamente", "success");
-                    getServices();
-                    //Limpiar formulario
-                    setNewService({
-                        id: 0,
-                        fechaProgramada: "",
-                        kilometrajeServicio: 0,
-                        tipoServicio: "",
-                        telefono: "",
-                        ubicaciónServicio: "",
-                        mecanico: "",
-                        descripcion: "",
-                        presupuesto: "",
-                        id_vehiculo: 0,
-                        estatus: true
-                    });
-                    closeModal();
-
-                } else {
-                    //Impresión de error en consola
-                    console.log(response);
-                    mostrarSweetAlert("Error", "El servicio no se pudo registrar", "error");
+            if (validateFields() === false) {
+                let camposVacios = "";
+                for (const key in newService) {
+                    if (newService[key] === "") {
+                        camposVacios += `${key}, `;
+                    }
                 }
-            });
+                if (newService.id_vehiculo === 0) {
+                    camposVacios += "Vehículo, ";
+                }
+                mostrarSweetAlert("Error", "Los siguientes campos están vacíos: " + camposVacios, "error");
+                return;
+            } else {
+                await fetch("/api/Servicios", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(newService)
+                }).catch((error) => {
+                    console.log(error);
+                }).then((response) => {
+                    if (response.ok === true) {
+                        mostrarSweetAlert("Registro exitoso", "El servicio se registró correctamente", "success");
+                        getServices();
+                        //Limpiar formulario
+                        setNewService({
+                            id: 0,
+                            fechaProgramada: "",
+                            kilometrajeServicio: 0,
+                            tipoServicio: "",
+                            telefono: "",
+                            ubicaciónServicio: "",
+                            mecanico: "",
+                            descripcion: "",
+                            presupuesto: "",
+                            id_vehiculo: 0,
+                            estatus: true
+                        });
+                        closeModal();
+
+                    } else {
+                        //Impresión de error en consola
+                        console.log(response);
+                        mostrarSweetAlert("Error", "El servicio no se pudo registrar", "error");
+                    }
+                });
+            }
         }
         catch (error) {
             console.log(error);
@@ -117,42 +130,51 @@ export const Services = () => {
 
     const editService = async () => {
         try {
-
-
-            await fetch(`/api/Servicios/${newService.id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(newService)
-            }).catch((error) => {
-                console.log(error);
-            }).then((response) => {
-                if (response.ok === true) {
-                    mostrarSweetAlert("Modificación exitosa", "El servició se modificó correctamente", "success");
-                    getServices();
-                    //Limpiar formulario
-                    setNewService({
-                        id: 0,
-                        fechaProgramada: "",
-                        kilometrajeServicio: 0,
-                        tipoServicio: "",
-                        telefono: "",
-                        ubicaciónServicio: "",
-                        mecanico: "",
-                        descripcion: "",
-                        presupuesto: "",
-                        id_vehiculo: 0,
-                        estatus: true
-                    });
-                    closeModal();
-
-                } else {
-                    //Impresión de error en consola
-                    console.log(response);
-                    mostrarSweetAlert("Error", "El servicio no se pudo modificar", "error");
+            if (validateFields() === false) {
+                let camposVacios = "";
+                for (const key in newService) {
+                    if (newService[key] === "") {
+                        camposVacios += `${key}, `;
+                    }
                 }
-            });
+                mostrarSweetAlert("Error", "Los siguientes campos están vacíos: " + camposVacios, "error");
+                return;
+            } else {
+                await fetch(`/api/Servicios/${newService.id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(newService)
+                }).catch((error) => {
+                    console.log(error);
+                }).then((response) => {
+                    if (response.ok === true) {
+                        mostrarSweetAlert("Modificación exitosa", "El servició se modificó correctamente", "success");
+                        getServices();
+                        //Limpiar formulario
+                        setNewService({
+                            id: 0,
+                            fechaProgramada: "",
+                            kilometrajeServicio: 0,
+                            tipoServicio: "",
+                            telefono: "",
+                            ubicaciónServicio: "",
+                            mecanico: "",
+                            descripcion: "",
+                            presupuesto: "",
+                            id_vehiculo: 0,
+                            estatus: true
+                        });
+                        closeModal();
+
+                    } else {
+                        //Impresión de error en consola
+                        console.log(response);
+                        mostrarSweetAlert("Error", "El servicio no se pudo modificar", "error");
+                    }
+                });
+            }
         }
         catch (error) {
             console.log(error);
@@ -231,13 +253,17 @@ export const Services = () => {
 
         if (orden) {
             if (document.getElementById("buscar").value === "Filtrar por persona") {
-                let res = await fetch(`/api/Servicios/Search?id=${0}&&orden=${orden}`);
-                let data = await res.json();
-                setLabelOrder("Servicios más antiguos");
+
                 if (localStorage.getItem("level") === "2") {
+                    let res = await fetch(`/api/Servicios/Search?id=${0}&&orden=${orden}`);
+                    let data = await res.json();
+                    setLabelOrder("Servicios más antiguos");
                     setServices(data);
                 } else {
-                    const data = services.filter((serv) => serv.Vehiculo.Usuario.id_usuario === parseInt(localStorage.getItem("id")));
+                    let idUser = parseInt(localStorage.getItem("id"));
+                    let res = await fetch(`/api/Servicios/Search?id=${idUser}&&orden=${orden}`);
+                    let data = await res.json();
+                    setLabelOrder("Servicios más antiguos");
                     setServices(data);
                 }
             } else {
@@ -245,13 +271,17 @@ export const Services = () => {
             }
         } else {
             if (document.getElementById("buscar").value === "Filtrar por persona") {
-                let res = await fetch(`/api/Servicios/Search?id=${0}&&orden=${orden}`);
-                let data = await res.json();
-                setLabelOrder("Servicios más recientes");
+
                 if (localStorage.getItem("level") === "2") {
+                    let res = await fetch(`/api/Servicios/Search?id=${0}&&orden=${orden}`);
+                    let data = await res.json();
+                    setLabelOrder("Servicios más recientes");
                     setServices(data);
                 } else {
-                    const data = services.filter((serv) => serv.Vehiculo.Usuario.id_usuario === parseInt(localStorage.getItem("id")));
+                    let idUser = parseInt(localStorage.getItem("id"));
+                    let res = await fetch(`/api/Servicios/Search?id=${idUser}&&orden=${orden}`);
+                    let data = await res.json();
+                    setLabelOrder("Servicios más recientes");
                     setServices(data);
                 }
             } else {
@@ -269,7 +299,12 @@ export const Services = () => {
             try {
                 const res = await fetch(`/api/Servicios/SearchByDate?fecha=${fecha}`);
                 const data = await res.json();
-                setServices(data);
+                if (localStorage.getItem("level") === "2") {
+                    setServices(data);
+                } else {
+                    const serv = data.filter((serv) => serv.Vehiculo.Usuario.id === parseInt(localStorage.getItem("id")));
+                    setServices(serv);
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -302,6 +337,14 @@ export const Services = () => {
             kilometrajeServicio: kilometraje
         });
     };
+
+    const validateFields = () => {
+        if (newService.id_vehiculo === 0 || newService.fechaProgramada === "" || newService.kilometrajeServicio === 0 || newService.tipoServicio === "" || newService.ubicacionServicio === "" || newService.mecanico === "" || newService.presupuesto === 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     const openModal = () => {
         setShowModal(true);
@@ -370,12 +413,23 @@ export const Services = () => {
                                 </select>
                             </div>
                         ) : (
-                            <></>
+                            <>
+                                <div className="input-group mb-3">
+                                    <select className="form-select" aria-label="Default select example" id="buscar" onChange={filterService} hidden>
+                                        <option defaultValue>Filtrar por persona</option>
+                                        {
+                                            users.map((user) => (
+                                                <option key={user.id} value={user.id}>{user.nombre} {user.apePaterno} {user.apeMaterno}</option>
+                                            ))
+                                        }
+                                    </select>
+                                </div>
+                            </>
                         )
                     }
 
                 </div>
-                <div className="col-2 sw-mobile">
+                <div className="col-2 sw-mobile mb-3">
                     <div className="row ms-1">
                         <div className="col-2">
                             <div className="input-group">
@@ -389,7 +443,7 @@ export const Services = () => {
                         </div>
                     </div>
                 </div>
-                <div className="col-4 ">
+                <div className="col-4 mb-3">
                     <div className="row date-mobile">
                         <div className="col-8">
                             <div className="input-group">
@@ -447,7 +501,7 @@ export const Services = () => {
                                             <td>{serv.ubicacionServicio}</td>
                                             <td>{serv.mecanico}</td>
                                             <td>{
-                                                serv.descripcion === null ? "Sin descripción" : serv.descripcion
+                                                serv.descripcion === null || serv.descripcion === "" ? "Sin descripción" : serv.descripcion
                                             }</td>
                                             <td>${serv.presupuesto}</td>
                                             <td>{serv.Vehiculo.modelo}</td>

@@ -42,45 +42,60 @@ export const Users = () => {
         }
     }
 
+    const validateFields = () => {
+        if (newUser.nombre === "" || newUser.apePaterno === "" || newUser.apeMaterno === "" || newUser.telefono === "" || newUser.centroTrabajo === "" || newUser.zona === "" || newUser.nivel === "" || newUser.gobierno === "" || newUser.email === "" || newUser.contrasena === "") {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     const addUser = async () => {
         try {
+            if (validateFields() === false) {
+                mostrarSweetAlert("Error", "Todos los campos son obligatorios", "error");
+                return;
+            } else {
 
-            await fetch("/api/Usuarios", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(newUser)
-            }).catch((error) => {
-                console.log(error);
-            }).then((response) => {
-                if (response.ok === true) {
-                    mostrarSweetAlert("Registro exitoso", "El usuario se registró correctamente", "success");
-                    getUsers();
-                    //Limpiar formulario
-                    setNewUser({
-                        id: 0,
-                        nombre: "",
-                        apePaterno: "",
-                        apeMaterno: "",
-                        telefono: "",
-                        centroTrabajo: "",
-                        zona: "",
-                        nivel: "",
-                        gobierno: "",
-                        email: "",
-                        contrasena: "",
-                        permiso: 1,
-                        estatus: 1
-                    });
-                    closeModal();
+                newUser.contrasena = encodePassword(newUser.contrasena);
 
-                } else {
-                    //Impresión de error en consola
-                    console.log(response);
-                    mostrarSweetAlert("Error", "El usuario no se pudo registrar", "error");
-                }
-            });
+                await fetch("/api/Usuarios", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(newUser)
+                }).catch((error) => {
+                    console.log(error);
+                }).then((response) => {
+                    if (response.ok === true) {
+                        mostrarSweetAlert("Registro exitoso", "El usuario se registró correctamente", "success");
+                        getUsers();
+                        //Limpiar formulario
+                        setNewUser({
+                            id: 0,
+                            nombre: "",
+                            apePaterno: "",
+                            apeMaterno: "",
+                            telefono: "",
+                            centroTrabajo: "",
+                            zona: "",
+                            nivel: "",
+                            gobierno: "",
+                            email: "",
+                            contrasena: "",
+                            permiso: 1,
+                            estatus: 1
+                        });
+                        closeModal();
+
+                    } else {
+                        //Impresión de error en consola
+                        console.log(response);
+                        mostrarSweetAlert("Error", "El usuario no se pudo registrar", "error");
+                    }
+                });
+            }
         }
         catch (error) {
             console.log(error);
@@ -89,47 +104,55 @@ export const Users = () => {
 
     const editUser = async () => {
         try {
-            if (newUser.permiso === true || document.getElementById("permiso").checked === true) {
-                newUser.permiso = 2;
+            if (validateFields() === false) {
+                mostrarSweetAlert("Error", "Todos los campos son obligatorios", "error");
+                return;
             } else {
-                newUser.permiso = 1;
-            }
-            await fetch(`/api/Usuarios/${newUser.id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(newUser)
-            }).catch((error) => {
-                console.log(error);
-            }).then((response) => {
-                if (response.ok === true) {
-                    mostrarSweetAlert("Modificación exitosa", "El usuario se modificó correctamente", "success");
-                    getUsers();
-                    //Limpiar formulario
-                    setNewUser({
-                        id: 0,
-                        nombre: "",
-                        apePaterno: "",
-                        apeMaterno: "",
-                        telefono: "",
-                        centroTrabajo: "",
-                        zona: "",
-                        nivel: "",
-                        gobierno: "",
-                        email: "",
-                        contrasena: "",
-                        permiso: 1,
-                        estatus: 1
-                    });
-                    closeModal();
-
+                if (newUser.permiso === true || document.getElementById("permiso").checked === true) {
+                    newUser.permiso = 2;
                 } else {
-                    //Impresión de error en consola
-                    console.log(response);
-                    mostrarSweetAlert("Error", "El usuario no se pudo modificar", "error");
+                    newUser.permiso = 1;
                 }
-            });
+
+                newUser.contrasena = encodePassword(newUser.contrasena);
+
+                await fetch(`/api/Usuarios/${newUser.id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(newUser)
+                }).catch((error) => {
+                    console.log(error);
+                }).then((response) => {
+                    if (response.ok === true) {
+                        mostrarSweetAlert("Modificación exitosa", "El usuario se modificó correctamente", "success");
+                        getUsers();
+                        //Limpiar formulario
+                        setNewUser({
+                            id: 0,
+                            nombre: "",
+                            apePaterno: "",
+                            apeMaterno: "",
+                            telefono: "",
+                            centroTrabajo: "",
+                            zona: "",
+                            nivel: "",
+                            gobierno: "",
+                            email: "",
+                            contrasena: "",
+                            permiso: 1,
+                            estatus: 1
+                        });
+                        closeModal();
+
+                    } else {
+                        //Impresión de error en consola
+                        console.log(response);
+                        mostrarSweetAlert("Error", "El usuario no se pudo modificar", "error");
+                    }
+                });
+            }
         }
         catch (error) {
             console.log(error);
@@ -177,6 +200,19 @@ export const Users = () => {
         catch (error) {
             console.log(error);
         }
+    }
+
+    //Función para codificar las contraseñas
+    const encodePassword = (password) => {
+        const pass = password;
+        const encodedPass = btoa(pass);
+        return encodedPass;
+    }
+
+    const decodePassword = (password) => {
+        const pass = password;
+        const decodedPass = atob(pass);
+        return decodedPass;
     }
 
     const findUser = async () => {
@@ -247,6 +283,9 @@ export const Users = () => {
             } else {
                 data.permiso = false;
             }
+
+            data.contrasena = decodePassword(data.contrasena);
+
             setNewUser(data);
 
             if (data.permiso) {

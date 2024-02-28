@@ -23,7 +23,8 @@ export const Repairs = () => {
         nombreMecanico: "",
         presupuesto: 0,
         estatus: true,
-        estatusReparacion: 0
+        estatusReparacion: 0,
+        id_vehiculo: 0
     });
 
     const [showModal, setShowModal] = useState(false);
@@ -40,7 +41,13 @@ export const Repairs = () => {
         try {
             const res = await fetch("/api/Reparaciones");
             const data = await res.json();
-            setRepairs(data);
+            if (localStorage.getItem("level") === "2") {
+                setRepairs(data);
+            } else {
+                let id = localStorage.getItem("id");
+                let dataUser = data.filter(rep => rep.Vehiculo.Usuario.id === parseInt(id));
+                setRepairs(dataUser);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -68,40 +75,61 @@ export const Repairs = () => {
 
     const addRepair = async () => {
         try {
+            if (validateFields() === false) {
+                let campos = "";
+                for (const key in newRepair) {
+                    if (newRepair[key] === "") {
+                        if (key === "fechaFin") {
+                            continue;
+                        } else if (key === "observaciones") {
+                            continue;
+                        }
 
-            await fetch("/api/Reparaciones", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(newRepair)
-            }).catch((error) => {
-                console.log(error);
-            }).then((response) => {
-                if (response.ok === true) {
-                    mostrarSweetAlert("Registro exitoso", "Reparación registrada correctamente", "success");
-                    getRepairs();
-                    //Limpiar formulario
-                    setNewRepair({
-                        id: 0,
-                        fecha: "",
-                        fechaFin: "",
-                        tipoReparacion: "",
-                        descripcion: "",
-                        ubicacionReparacion: "",
-                        nombreMecanico: "",
-                        presupuesto: 0,
-                        estatus: true,
-                        estatusReparacion: 0
-                    });
-                    closeModal();
-
-                } else {
-                    //Impresión de error en consola
-                    console.log(response);
-                    mostrarSweetAlert("Error", "La reparación no se pudo registrar", "error");
+                        campos += key + ", ";
+                    }
                 }
-            });
+                if (newRepair.id_vehiculo === 0) {
+                    campos += "Vehiculo, ";
+                }
+
+                mostrarSweetAlert("Error", "Los siguientes campos estan vacíos: " + campos, "error");
+                return;
+            } else {
+                await fetch("/api/Reparaciones", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(newRepair)
+                }).catch((error) => {
+                    console.log(error);
+                }).then((response) => {
+                    if (response.ok === true) {
+                        mostrarSweetAlert("Registro exitoso", "Reparación registrada correctamente", "success");
+                        getRepairs();
+                        //Limpiar formulario
+                        setNewRepair({
+                            id: 0,
+                            fecha: "",
+                            fechaFin: "",
+                            tipoReparacion: "",
+                            descripcion: "",
+                            ubicacionReparacion: "",
+                            nombreMecanico: "",
+                            presupuesto: 0,
+                            estatus: true,
+                            estatusReparacion: 0,
+                            id_vehiculo: 0
+                        });
+                        closeModal();
+
+                    } else {
+                        //Impresión de error en consola
+                        console.log(response);
+                        mostrarSweetAlert("Error", "La reparación no se pudo registrar", "error");
+                    }
+                });
+            }
         }
         catch (error) {
             console.log(error);
@@ -110,39 +138,60 @@ export const Repairs = () => {
 
     const editRepair = async () => {
         try {
-            await fetch(`/api/Reparaciones/${newRepair.id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(newRepair)
-            }).catch((error) => {
-                console.log(error);
-            }).then((response) => {
-                if (response.ok === true) {
-                    mostrarSweetAlert("Modificación exitosa", "Reparación modificada correctamente", "success");
-                    getRepairs();
-                    //Limpiar formulario
-                    setNewRepair({
-                        id: 0,
-                        fecha: "",
-                        fechaFin: "",
-                        tipoReparacion: "",
-                        descripcion: "",
-                        ubicacionReparacion: "",
-                        nombreMecanico: "",
-                        presupuesto: 0,
-                        estatus: true,
-                        estatusReparacion: 0
-                    });
-                    closeModal();
+            if (validateFields() === false) {
+                let campos = "";
+                for (const key in newRepair) {
+                    if (newRepair[key] === "") {
+                        if (key === "fechaFin") {
+                            continue;
+                        } else if (key === "observaciones") {
+                            continue;
+                        }
 
-                } else {
-                    //Impresión de error en consola
-                    console.log(response);
-                    mostrarSweetAlert("Error", "La reparación no se pudo modificar", "error");
+                        campos += key + ", ";
+                    }
                 }
-            });
+                if (newRepair.id_vehiculo === 0) {
+                    campos += "Vehiculo, ";
+                }
+
+                mostrarSweetAlert("Error", "Los siguientes campos estan vacíos: " + campos, "error");
+                return;
+            } else {
+                await fetch(`/api/Reparaciones/${newRepair.id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(newRepair)
+                }).catch((error) => {
+                    console.log(error);
+                }).then((response) => {
+                    if (response.ok === true) {
+                        mostrarSweetAlert("Modificación exitosa", "Reparación modificada correctamente", "success");
+                        getRepairs();
+                        //Limpiar formulario
+                        setNewRepair({
+                            id: 0,
+                            fecha: "",
+                            fechaFin: "",
+                            tipoReparacion: "",
+                            descripcion: "",
+                            ubicacionReparacion: "",
+                            nombreMecanico: "",
+                            presupuesto: 0,
+                            estatus: true,
+                            estatusReparacion: 0
+                        });
+                        closeModal();
+
+                    } else {
+                        //Impresión de error en consola
+                        console.log(response);
+                        mostrarSweetAlert("Error", "La reparación no se pudo modificar", "error");
+                    }
+                });
+            }
         }
         catch (error) {
             console.log(error);
@@ -276,19 +325,35 @@ export const Repairs = () => {
 
         if (orden) {
             if (document.getElementById("buscar").value === "Filtrar por persona") {
-                let res = await fetch(`/api/Reparaciones/Search?id=${0}&&orden=${orden}`);
-                let data = await res.json();
-                setLabelOrder("Reparaciones antiguas");
-                setRepairs(data);
+                if (localStorage.getItem("level") === "2") {
+                    let res = await fetch(`/api/Reparaciones/Search?id=${0}&&orden=${orden}`);
+                    let data = await res.json();
+                    setLabelOrder("Reparaciones antiguas");
+                    setRepairs(data);
+                } else {
+                    let id = localStorage.getItem("id");
+                    let res = await fetch(`/api/Reparaciones/Search?id=${id}&&orden=${orden}`);
+                    let data = await res.json();
+                    setLabelOrder("Reparaciones antiguas");
+                    setRepairs(data);
+                }
             } else {
                 filterService();
             }
         } else {
             if (document.getElementById("buscar").value === "Filtrar por persona") {
-                let res = await fetch(`/api/Reparaciones/Search?id=${0}&&orden=${orden}`);
-                let data = await res.json();
-                setLabelOrder("Reparaciones recientes");
-                setRepairs(data);
+                if (localStorage.getItem("level") === "2") {
+                    let res = await fetch(`/api/Reparaciones/Search?id=${0}&&orden=${orden}`);
+                    let data = await res.json();
+                    setLabelOrder("Reparaciones recientes");
+                    setRepairs(data);
+                } else {
+                    let id = localStorage.getItem("id");
+                    let res = await fetch(`/api/Reparaciones/Search?id=${id}&&orden=${orden}`);
+                    let data = await res.json();
+                    setLabelOrder("Reparaciones recientes");
+                    setRepairs(data);
+                }
             } else {
                 filterService();
             }
@@ -304,10 +369,26 @@ export const Repairs = () => {
             try {
                 const res = await fetch(`/api/Reparaciones/GetByDate?fecha=${fecha}`);
                 const data = await res.json();
-                setRepairs(data);
+                if (localStorage.getItem("level") === "2") {
+                    setRepairs(data);
+                } else {
+                    let id = localStorage.getItem("id");
+                    let dataUser = data.filter(rep => rep.Vehiculo.Usuario.id === parseInt(id));
+                    setRepairs(dataUser);
+                }
             } catch (error) {
                 console.log(error);
             }
+        }
+    }
+
+    const validateFields = () => {
+        if (newRepair.fecha === "" || newRepair.tipoReparacion === "" || newRepair.descripcion === "" || newRepair.ubicacionReparacion === ""
+            || newRepair.nombreMecanico === "" || newRepair.presupuesto === 0
+            || newRepair.id_vehiculo === 0) {
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -356,19 +437,36 @@ export const Repairs = () => {
         <div className="fluid-content noS fade-in">
             <h1 className="text-center text-white"><i className="fa-solid fa-toolbox"></i> Reparaciones</h1>
             <div className="row">
-                <div className="col-4 user-select">
-                    <div className="input-group mb-3">
-                        <select className="form-select" aria-label="Default select example" id="buscar" onChange={filterService}>
-                            <option defaultValue>Filtrar por persona</option>
-                            {
-                                users.map((user) => (
-                                    <option key={user.id} value={user.id}>{user.nombre} {user.apePaterno} {user.apeMaterno}</option>
-                                ))
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div className="col-2 sw-mobile">
+                {
+                    localStorage.getItem("level") === "2" ? (
+                        <div className="col-4 user-select">
+                            <div className="input-group mb-3">
+                                <select className="form-select" aria-label="Default select example" id="buscar" onChange={filterService}>
+                                    <option defaultValue>Filtrar por persona</option>
+                                    {
+                                        users.map((user) => (
+                                            <option key={user.id} value={user.id}>{user.nombre} {user.apePaterno} {user.apeMaterno}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="col-4 user-select">
+                            <div className="input-group mb-3">
+                                <select className="form-select" aria-label="Default select example" id="buscar" onChange={filterService} hidden>
+                                    <option defaultValue>Filtrar por persona</option>
+                                    {
+                                        users.map((user) => (
+                                            <option key={user.id} value={user.id}>{user.nombre} {user.apePaterno} {user.apeMaterno}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    )
+                }
+                <div className="col-2 sw-mobile mb-3">
                     <div className="row ms-1">
                         <div className="col-2">
                             <div className="input-group">
@@ -382,7 +480,7 @@ export const Repairs = () => {
                         </div>
                     </div>
                 </div>
-                <div className="col-4 ">
+                <div className="col-4 mb-3">
                     <div className="row date-mobile">
                         <div className="col-8">
                             <div className="input-group">

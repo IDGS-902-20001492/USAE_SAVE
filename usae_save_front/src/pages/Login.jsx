@@ -2,8 +2,11 @@ import { useState } from "react";
 import "./Login.css";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import { useForm } from "react-hook-form";
 
 export const Login = () => {
+
+    const { register, handleSubmit, formState: { errors } } = useForm();
 
     const [user, setUser] = useState({
         email: "",
@@ -11,20 +14,40 @@ export const Login = () => {
     });
 
     const handleInputChange = (e) => {
+
+        e.preventDefault();
+
         setUser({
             ...user,
             [e.target.name]: e.target.value
         });
     }
 
-    const getLogin = async () => {
+    //Función para prevenir ataques de inyección de código
+    const cleanInput = (data) => {
+        const cleanData = data.replace(/<(.*)>/, "");
+        return cleanData;
+    }
+
+    //Función para codificar las contraseñas
+    const encodePassword = (password) => {
+        const pass = password;
+        const encodedPass = btoa(pass);
+        return encodedPass;
+    }
+
+    const getLogin = async (data) => {
         try {
+            data.email = cleanInput(data.email);
+            data.contrasena = cleanInput(data.contrasena);
+
+            data.contrasena = encodePassword(data.contrasena);
             await fetch("/api/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(user)
+                body: JSON.stringify(data)
             }).catch((error) => {
                 console.log(error);
             }).then((response) => {
@@ -77,19 +100,27 @@ export const Login = () => {
                             <h1 className="text-center">Iniciar Sesión</h1>
                             <br />
                             {/*Comienza el formulario*/}
-                            <div className="mb-3">
-                                <label htmlFor="email" className="form-label">Correo electrónico</label>
-                                <input type="email" className="form-control" id="email"
-                                    onChange={handleInputChange} name="email" placeholder="Correo electrónico" />
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="password" className="form-label">Contraseña</label>
-                                <input type="password" className="form-control" id="password"
-                                    onChange={handleInputChange} name="contrasena" placeholder="Contraseña" />
-                            </div>
-                            <div className="d-grid">
-                                <button onClick={getLogin} className="btn btn-primary btn-lg">Iniciar Sesión</button>
-                            </div>
+                            <form onSubmit={handleSubmit(getLogin)}>
+                                <div className="mb-3">
+                                    <label htmlFor="email" className="form-label">Correo electrónico</label>
+                                    <input type="email" className="form-control" id="email"
+                                        onChange={handleInputChange} placeholder="Correo electrónico"
+                                        {...register("email", { required: true })}
+                                    />
+                                    {errors.email && <span className="text-danger">El email es requerido</span>}
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="password" className="form-label">Contraseña</label>
+                                    <input type="password" className="form-control" id="password"
+                                        onChange={handleInputChange} name="contrasena" placeholder="Contraseña"
+                                        {...register("contrasena", { required: true })}
+                                    />
+                                    {errors.contrasena && <span className="text-danger">La contraseña es requerida</span>}
+                                </div>
+                                <div className="d-grid">
+                                    <button type="submit" className="btn btn-primary btn-lg">Iniciar Sesión</button>
+                                </div>
+                            </form>
 
 
                             <div className="mt-1">

@@ -11,7 +11,9 @@ const Dashboard = () => {
     const getMileageHistory = async () => {
         const res = await fetch("api/Dashboard/HistorialesKilometraje");
         const data = await res.json();
-        setMileageHistory(data);
+        //Filtramos el historial donde el vehiculo tenga el estatus en true
+        const dataFiltred = data.filter((item) => item.Vehiculo.estatus === true);
+        setMileageHistory(dataFiltred);
     }
 
     const getMileageHistoryById = async (id) => {
@@ -87,7 +89,7 @@ const Dashboard = () => {
                 <DashboardGraphics />
                 <div className="row mt-2 mb-2">
                     <div className="col-md-12">
-                        <h2 className="text-center text-white">Notificaciones sobre vehiculos</h2>
+                        <h2 className="text-center text-white shadow-lg p-2">Notificaciones sobre vehiculos</h2>
                     </div>
                 </div>
                 <div className='row p-3'>
@@ -100,26 +102,41 @@ const Dashboard = () => {
                                             getMileageHistoryById(item.id);
                                         }
                                     }
-                                >
-                                    <div className="">
-                                        <div className="text-center h5">
-                                            {
-                                                item.visto === false ? (
-                                                    <i className="fas fa-exclamation-triangle alertAnimation" style={{ color: "green" }}></i>
-                                                ) : null
-                                            }<label className="text-center"><b>{item.Vehiculo.modelo}</b></label>
+                                    //Si el item.visto es falso, le damos una sombra verde al card, sino, le damos una sombra normal
+                                    style={
+                                        {
+                                            boxShadow: item.visto === false ?
+                                                //Hacemos sombras difuminadas
+                                                "0 0 1 0.2rem rgba(0, 255, 0, 0.25)" : "0 0 0 0.2rem rgba(0, 0, 0, 0.1)"
+                                        }}>
+                                    <div className="row" >
+                                        <div className="col-md-4">
+                                            <div className="container_img p-3">
+                                                <img src={item.Vehiculo.imagen} alt="imagen" className="imgAutomovil mt-3 " style={{ position: "cover" }} />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-8">
+                                            <div className="h5">
+                                                {
+                                                    item.visto === false ? (
+                                                        <i className="fas fa-exclamation-triangle alertAnimation" style={{ color: "green" }}></i>
+                                                    ) : null
+                                                }<label className="text-center"><b>{item.Vehiculo.modelo}</b></label>
+                                            </div>
+
+                                            <div className="card-body">
+                                                <i className="fas fa-user"></i> <b>Titular:</b> {item.Vehiculo.Usuario.nombre} {item.Vehiculo.Usuario.apePaterno} {item.Vehiculo.Usuario.apeMaterno}
+                                                <br />
+                                                <i className="fa-solid fa-user-tag"></i> <b>Comparte con: </b>
+                                                {
+                                                    item.Vehiculo.comparteCon === null || item.Vehiculo.comparteCon === "" ? " No compartido" : item.Vehiculo.comparteCon
+                                                }
+                                                <br />
+                                                <i className="fas fa-tachometer-alt"></i> <b>Kilometraje:</b> {item.kilometrajeNuevo}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="card-body">
-                                        <i className="fas fa-user"></i> <b>Titular:</b> {item.Vehiculo.Usuario.nombre} {item.Vehiculo.Usuario.apePaterno} {item.Vehiculo.Usuario.apeMaterno}
-                                        <br />
-                                        <i className="fa-solid fa-user-tag"></i> <b>Comparte con: </b>
-                                        {
-                                            item.Vehiculo.comparteCon === null || item.Vehiculo.comparteCon === "" ? " No compartido" : item.Vehiculo.comparteCon
-                                        }
-                                        <br />
-                                        <i className="fas fa-tachometer-alt"></i> <b>Kilometraje:</b> {item.kilometrajeNuevo}
-                                    </div>
+
                                 </div>
                             </div>
                         ))

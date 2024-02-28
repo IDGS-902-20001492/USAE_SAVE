@@ -88,40 +88,55 @@ const Vehicles = () => {
 
     const addCar = async () => {
         try {
-            await fetch("/api/Vehiculos", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(car)
-            }).catch((error) => {
-                console.log(error);
-            }).then((response) => {
-                if (response.ok === true) {
-                    mostrarSweetAlert("Registro exitoso", "El vehiculo se registró correctamente", "success");
-                    getCars();
-                    //Limpiar formulario
-                    setCar({
-                        id: 0,
-                        marca: "",
-                        modelo: "",
-                        tipo: "",
-                        placas: "",
-                        imagen: "",
-                        combustible: "",
-                        kilometrajeRegistro: "",
-                        comparteCon: "",
-                        id_usuario: "",
-                        estatus: "True",
-                    });
-                    closeModal();
-
-                } else {
-                    //Impresión de error en consola
-                    console.log(response);
-                    mostrarSweetAlert("Error", "El vehiculo no se pudo registrar", "error");
+            if (validateFields() === false) {
+                let camposVacios = "";
+                for (let campo in car) {
+                    if (car[campo] === "") {
+                        if (campo !== "imagen") {
+                            if (campo !== "comparteCon") {
+                                camposVacios += campo + ", ";
+                            }
+                        }
+                    }
                 }
-            });
+                mostrarSweetAlert("Error", "Los siguientes campos están vacios: " + camposVacios, "error");
+                return;
+            } else {
+                await fetch("/api/Vehiculos", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(car)
+                }).catch((error) => {
+                    console.log(error);
+                }).then((response) => {
+                    if (response.ok === true) {
+                        mostrarSweetAlert("Registro exitoso", "El vehiculo se registró correctamente", "success");
+                        getCars();
+                        //Limpiar formulario
+                        setCar({
+                            id: 0,
+                            marca: "",
+                            modelo: "",
+                            tipo: "",
+                            placas: "",
+                            imagen: "",
+                            combustible: "",
+                            kilometrajeRegistro: "",
+                            comparteCon: "",
+                            id_usuario: "",
+                            estatus: "True",
+                        });
+                        closeModal();
+
+                    } else {
+                        //Impresión de error en consola
+                        console.log(response);
+                        mostrarSweetAlert("Error", "El vehiculo no se pudo registrar", "error");
+                    }
+                });
+            }
         }
         catch (error) {
             console.log(error);
@@ -130,40 +145,55 @@ const Vehicles = () => {
 
     const editCar = async () => {
         try {
-            await fetch(`/api/Vehiculos/${car.id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(car)
-            }).catch((error) => {
-                console.log(error);
-            }).then((response) => {
-                if (response.ok === true) {
-                    mostrarSweetAlert("Modificación exitosa", "El usuario se modificó correctamente", "success");
-                    getCars();
-                    //Limpiar formulario
-                    setCar({
-                        id: 0,
-                        marca: "",
-                        modelo: "",
-                        tipo: "",
-                        placas: "",
-                        imagen: "",
-                        combustible: "",
-                        kilometrajeRegistro: "",
-                        comparteCon: "",
-                        id_usuario: "",
-                        estatus: "True",
-                    });
-                    closeModal();
-
-                } else {
-                    //Impresión de error en consola
-                    console.log(response);
-                    mostrarSweetAlert("Error", "El usuario no se pudo modificar", "error");
+            if (validateFields() === false) {
+                let camposVacios = "";
+                for (let campo in car) {
+                    if (car[campo] === "") {
+                        if (campo !== "imagen") {
+                            if (campo !== "comparteCon") {
+                                camposVacios += campo + ", ";
+                            }
+                        }
+                    }
                 }
-            });
+                mostrarSweetAlert("Error", "Los siguientes campos están vacios: " + camposVacios, "error");
+                return;
+            } else {
+                await fetch(`/api/Vehiculos/${car.id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(car)
+                }).catch((error) => {
+                    console.log(error);
+                }).then((response) => {
+                    if (response.ok === true) {
+                        mostrarSweetAlert("Modificación exitosa", "El usuario se modificó correctamente", "success");
+                        getCars();
+                        //Limpiar formulario
+                        setCar({
+                            id: 0,
+                            marca: "",
+                            modelo: "",
+                            tipo: "",
+                            placas: "",
+                            imagen: "",
+                            combustible: "",
+                            kilometrajeRegistro: "",
+                            comparteCon: "",
+                            id_usuario: "",
+                            estatus: "True",
+                        });
+                        closeModal();
+
+                    } else {
+                        //Impresión de error en consola
+                        console.log(response);
+                        mostrarSweetAlert("Error", "El usuario no se pudo modificar", "error");
+                    }
+                });
+            }
         }
         catch (error) {
             console.log(error);
@@ -312,6 +342,14 @@ const Vehicles = () => {
 
     }
 
+    const validateFields = () => {
+        if (car.marca === "" || car.modelo === "" || car.tipo === "" || car.placas === "" || car.combustible === "" || car.kilometrajeRegistro === "" || car.id_usuario === "") {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     const confirmarActualizacion = async () => {
         //Preguntamos si el usuario está seguro de actualizar el kilometraje
         Swal.fire({
@@ -387,6 +425,46 @@ const Vehicles = () => {
                 console.log(error);
             }
         }
+    }
+
+    const actKilometrajeSweetAlert = (cartId, kiloAnterior, coche) => {
+        Swal.fire({
+            title: "Actualizar Kilometraje",
+            html: "<input type='number' id='updateKilometraje' class='swal2-input' placeholder=" + kiloAnterior + ">",
+            showCancelButton: true,
+            confirmButtonText: "Actualizar",
+            cancelButtonText: "Cancelar",
+            showLoaderOnConfirm: true,
+            preConfirm: (kilometraje) => {
+                if (kilometraje === "") {
+                    Swal.showValidationMessage("El campo de kilometraje no puede estar vacío");
+                } else if (kiloAnterior > document.getElementById("updateKilometraje").value) {
+                    Swal.showValidationMessage("El kilometraje no puede ser menor al registrado");
+                }
+                return fetch(`/api/Vehiculos/UpdateKilometraje?id=${cartId}&kilometraje=${document.getElementById("updateKilometraje").value}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(coche)
+                })
+                    .then((response) => {
+                        if (!response.status == 204) {
+                            throw new Error(response.statusText);
+                        }
+                        return response;
+                    })
+                    .catch((error) => {
+                        Swal.showValidationMessage(`Error al actualizar: ${error}`);
+                    });
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire("¡Actualizado!", "El kilometraje ha sido actualizado.", "success");
+                getCars();
+            }
+        });
     }
 
     return (
@@ -483,6 +561,7 @@ const Vehicles = () => {
                                 <th>Kilometraje</th>
                                 <th>Principal</th>
                                 <th>Compartido</th>
+                                <th>Actualizar KM</th>
                                 <th>Editar</th>
                                 <th>Eliminar</th>
                             </tr>
@@ -491,7 +570,13 @@ const Vehicles = () => {
                             {carts.length > 0 ? (
                                 carts.map((vehicle) => (
                                     <tr key={vehicle.id}>
-                                        <td className="tdImg"><button className="btnAbrirImg" onClick={() => { openImage(vehicle.imagen) }}><img className="imgCocheMini" src={from64(vehicle.imagen)} /></button></td>
+                                        {
+                                            vehicle.imagen ? (
+                                                <td className="tdImg"><button className="btnAbrirImg" onClick={() => { openImage(vehicle.imagen) }}><img className="imgCocheMini" src={from64(vehicle.imagen)} /></button></td>
+                                            ) : (
+                                                <td className="tdImg"><button className="btnAbrirImg" onClick={() => { openImage("/img/coche.png") }}><img className="imgCocheMini" src="/img/coche.png" /></button></td>
+                                            )
+                                        }
                                         <td>{vehicle.marca}</td>
                                         <td>{vehicle.modelo}</td>
                                         <td>{vehicle.placas}</td>
@@ -510,7 +595,11 @@ const Vehicles = () => {
                                                 </div>
                                             )
                                         }</td>
-
+                                        <td>
+                                            <button className="btn btn-info" onClick={() => { actKilometrajeSweetAlert(vehicle.id, vehicle.kilometrajeRegistro, vehicle) }}>
+                                                <i className="fas fa-arrow-up"></i>
+                                            </button>
+                                        </td>
                                         <td>
                                             <button className="btn btn-success" onClick={
                                                 () => {
@@ -611,12 +700,11 @@ const Vehicles = () => {
                         </div>
                     )}
                 </div>
-
             </div>
             {/*Creamos un div modal*/}
             <div
                 className={`modal fade ${showModal ? "show" : ""}`}
-                id="modalAddUser" tabIndex="-1" role="dialog"
+                id="modalAddUser" tabIndex="-2" role="dialog"
                 style={{ display: showModal ? "block" : "none" }}>
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
@@ -716,6 +804,7 @@ const Vehicles = () => {
 
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={closeModal}>Cerrar</button>
                         </div>
+
                     </div>
                 </div>
             </div>

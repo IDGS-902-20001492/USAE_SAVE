@@ -22,8 +22,8 @@ export const Register = () => {
 
     const addUser = async () => {
         try {
-            // eslint-disable-next-line no-unused-vars
-            const res = await fetch("/api/registro", {
+            newUser.contrasena = encodePassword(newUser.contrasena);
+            await fetch("/api/registro", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -64,6 +64,46 @@ export const Register = () => {
         });
     };
 
+    const validateFields = () => {
+        if (newUser.nombre === "" || newUser.apePaterno === "" || newUser.apeMaterno === "" || newUser.telefono === "" || newUser.centroTrabajo === "" || newUser.zona === "" || newUser.nivel === "" || newUser.gobierno === "" || newUser.email === "" || newUser.contrasena === "") {
+            let camposVacios = "";
+            for (let key in newUser) {
+                if (newUser[key] === "") {
+                    if (key === "contrasena") {
+                        key = "contraseña";
+                    } else if (key === "apePaterno") {
+                        key = "apellido paterno";
+                    } else if (key === "apeMaterno") {
+                        key = "apellido materno";
+                    } else if (key === "centroTrabajo") {
+                        key = "centro de trabajo";
+                    } else if (key === "zona") {
+                        key = "zona/sector";
+                    } else if (key === "gobierno") {
+                        key = "tipo de gobierno";
+                    } else if (key === "email") {
+                        key = "correo electrónico/email";
+                    }
+                    camposVacios += key + ", ";
+                }
+            }
+
+            mostrarSweetAlert("Error", "Los siguientes campos están vacios: " + camposVacios, "error");
+        } else {
+            if (newUser.contrasena !== document.getElementById("password2").value) {
+                mostrarSweetAlert("Error", "Las contraseñas no coinciden", "error");
+            } else {
+                addUser();
+            }
+        }
+    }
+
+    //Función para codificar las contraseñas
+    const encodePassword = (password) => {
+        const pass = password;
+        const encodedPass = btoa(pass);
+        return encodedPass;
+    }
 
     return (
         <div>
@@ -135,7 +175,7 @@ export const Register = () => {
                                         <div className="mb-3">
                                             <label htmlFor="gobierno" className="form-label">Tipo Gobierno</label>
                                             <select className="form-select" onChange={handleInputChange} name="gobierno">
-                                                <option selected>Selecciona una opción</option>
+                                                <option defaultValue={""}>Selecciona una opción</option>
                                                 <option value="Federal">Federal</option>
                                                 <option value="Estatal">Estatal</option>
                                             </select>
@@ -150,7 +190,7 @@ export const Register = () => {
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="password" className="form-label">Contraseña</label>
-                                        <input type="password" onChange={handleInputChange} name="contrasena"
+                                        <input type="password" name="contrasena" onChange={handleInputChange}
                                             className="form-control" id="password" placeholder="" />
                                     </div>
                                     <div className="mb-3">
@@ -158,7 +198,7 @@ export const Register = () => {
                                         <input type="password" className="form-control" id="password2" placeholder="" />
                                     </div>
                                     <div className="d-grid">
-                                        <button className="btn btn-primary btn-lg" onClick={addUser}>Registrarse</button>
+                                        <button className="btn btn-primary btn-lg" onClick={validateFields}>Registrarse</button>
                                     </div>
                                 </div>
 
