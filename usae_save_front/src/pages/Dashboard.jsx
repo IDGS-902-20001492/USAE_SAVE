@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import DashboardGraphics from "../components/DashboardGraphics"
 import "./Dashboard.css";
 
-
 const Dashboard = () => {
 
     const [mileageHistory, setMileageHistory] = useState([]);
     const [mileageHistoryById, setMileageHistoryById] = useState([]);
+    const [vehicle, setVehicle] = useState({});
 
     const getMileageHistory = async () => {
         const res = await fetch("api/Dashboard/HistorialesKilometraje");
@@ -20,6 +20,28 @@ const Dashboard = () => {
         const res = await fetch("api/Dashboard/HistorialesKilometraje/" + id);
         const data = await res.json();
         setMileageHistoryById(data);
+    }
+
+    const validateService = async (id) => {
+        const res = await fetch("api/Servicios");
+        const data = await res.json();
+        const dataFiltred = data.filter((item) => item.id_vehiculo === id);
+        if (dataFiltred.length > 0) {
+            //Volvemos a filtrar para obtener el servicio con la fechaProgramada mas reciente
+            const dataFiltred2 = dataFiltred.filter((item) => item.fechaProgramada === dataFiltred.reduce((prev, current) => (prev.fechaProgramada > current.fechaProgramada) ? prev : current).fechaProgramada);
+            //Obtenemos la fecha de hoy
+            const today = new Date();
+            //Obtenemos la fecha del servicio
+            const serviceDate = new Date(dataFiltred2[0].fechaProgramada);
+            // Si la fecha del servicio más reciente se encuentra en el rango de 1 semana después de la fecha de hoy, no se debe realizar un servicio
+            if (serviceDate >= today && serviceDate <= new Date(today.getFullYear(), today.getMonth(), today.getDate() + 5)) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return;
+        }
     }
 
     const changeSeenStatus = async (id) => {
@@ -100,6 +122,7 @@ const Dashboard = () => {
                                     onClick={
                                         () => {
                                             getMileageHistoryById(item.id);
+                                            setVehicle(item.Vehiculo);
                                         }
                                     }
                                     //Si el item.visto es falso, le damos una sombra verde al card, sino, le damos una sombra normal
@@ -166,9 +189,28 @@ const Dashboard = () => {
                                                     <>
                                                         {
                                                             mileageHistoryById.kilometrajeAnterior !== mileageHistoryById.kilometrajeNuevo ? (
-                                                                <div className="alert alert-danger" role="alert">
-                                                                    <i className="fas fa-exclamation-triangle"></i> <b>Es necesario realizar un servicio</b>
-                                                                </div>
+                                                                <>
+                                                                    {
+                                                                        !validateService(vehicle.id)
+                                                                            ? (
+                                                                                <div className="alert alert-warning" role="alert">
+                                                                                    <i className="fas fa-exclamation-triangle"></i> <b>Es necesario realizar un servicio</b>
+                                                                                    <br />
+                                                                                    <button
+                                                                                        data-bs-dismiss="modal" aria-label="Close"
+                                                                                        className="btn btn-warning mt-3"
+                                                                                        onClick={() => {
+                                                                                            window.location.href = "/services";
+                                                                                        }}
+                                                                                    >Ir a servicios</button>
+                                                                                </div>
+                                                                            ) : (
+                                                                                <div className="alert alert-success" role="alert">
+                                                                                    <i className="fas fa-check"></i> <b>No es necesario realizar un servicio ya que hace poco se realizó uno.</b>
+                                                                                </div>
+                                                                            )
+                                                                    }
+                                                                </>
                                                             ) : (<>
                                                                 <div className="alert alert-success" role="alert">
                                                                     <i className="fas fa-check"></i> <b>No es necesario realizar un servicio</b>

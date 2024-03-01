@@ -14,6 +14,8 @@ import Swal from "sweetalert2";
 import Histories from "./pages/Histories";
 import ShowHistory from "./components/ShowHistory";
 import Dashboard from "./pages/Dashboard";
+import About from "./pages/About";
+import NotFound from "./pages/NotFound";
 function App() {
 
   const [auth, setAuth] = useState(false);
@@ -160,6 +162,7 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/About" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/users" element={auth && localStorage.getItem("level") === "2" ? <Users /> : <Home />} />
@@ -169,6 +172,7 @@ function App() {
           <Route path="/histories" element={auth ? <Histories /> : <Home />} />
           <Route path="/histories/:id" element={auth ? <ShowHistory /> : <Home />} />
           <Route path="/dashboard" element={auth && localStorage.getItem("level") === "2" ? <Dashboard /> : <Login />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </>

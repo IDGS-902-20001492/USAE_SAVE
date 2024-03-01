@@ -481,7 +481,7 @@ export const Services = () => {
                                 <th>Kilometraje de servicio</th>
                                 <th>Tipo de Servicio</th>
                                 <th>Dirección</th>
-                                <th>Mecánico</th>
+                                <th>Mecánico/Taller</th>
                                 <th>Descripción</th>
                                 <th>Presupuesto</th>
                                 <th>Vehiculo</th>
@@ -566,7 +566,7 @@ export const Services = () => {
                                         </div>
                                         <div className="col-6">
                                             <p className="card-text"><b>Dirección de servicio:</b> {serv.ubicacionServicio}</p>
-                                            <p className="card-text"><b>Mecánico:</b> {serv.mecanico}</p>
+                                            <p className="card-text"><b>Mecánico ó taller:</b> {serv.mecanico}</p>
                                         </div>
                                     </div>
                                     <div className="row mt-2">
@@ -675,7 +675,7 @@ export const Services = () => {
                             </div>
                             <div className="row">
                                 <div className="col-12 mb-3">
-                                    <label htmlFor="mecanico" className="form-label">Mecánico</label>
+                                    <label htmlFor="mecanico" className="form-label">Mecánico/Taller</label>
                                     <input type="text" className="form-control" id="mecanico" name="mecanico" value={newService.mecanico} onChange={handleInputChange} />
                                 </div>
                             </div>

@@ -518,7 +518,7 @@ export const Repairs = () => {
                                 <th>Ubicación</th>
                                 <th>Descripción</th>
                                 <th>Observaciones</th>
-                                <th>Mecánico</th>
+                                <th>Mecánico/Taller</th>
                                 <th>Presupuesto</th>
                                 <th>Vehiculo</th>
                                 <th>Encargado principal</th>
@@ -633,7 +633,7 @@ export const Repairs = () => {
                                                 <p><i className="fas fa-eye"></i><b>Observaciones:</b> {
                                                     rep.observaciones === "" || rep.observaciones === null ? "Sin observaciones" : rep.observaciones
                                                 }</p>
-                                                <p><i className="fas fa-user"></i><b>Mecánico:</b> {rep.nombreMecanico}</p>
+                                                <p><i className="fas fa-user"></i><b>Mecánico ó Taller:</b> {rep.nombreMecanico}</p>
                                                 <p><i className="fas fa-dollar-sign"></i><b>Presupuesto:</b> ${rep.presupuesto}</p>
                                                 <p><i className="fas fa-check"></i><b>Reparación Concluida:</b> {
                                                     rep.estatusReparacion === 0 ? "No" : "Si"
@@ -757,7 +757,7 @@ export const Repairs = () => {
                             </div>
                             <div className="row">
                                 <div className="col-12 mb-1">
-                                    <label htmlFor="nombreMecanico" className="form-label">Mecánico</label>
+                                    <label htmlFor="nombreMecanico" className="form-label">Mecánico/Taller</label>
                                     <input type="text" className="form-control" id="nombreMecanico" name="nombreMecanico" value={newRepair.nombreMecanico} onChange={handleInputChange} />
                                 </div>
                             </div>
