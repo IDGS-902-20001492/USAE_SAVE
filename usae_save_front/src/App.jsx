@@ -14,8 +14,9 @@ import Swal from "sweetalert2";
 import Histories from "./pages/Histories";
 import ShowHistory from "./components/ShowHistory";
 import Dashboard from "./pages/Dashboard";
-import About from "./pages/About";
 import NotFound from "./pages/NotFound";
+import Banner from "./pages/Banner";
+import { Contact } from "./pages/Contact";
 function App() {
 
   const [auth, setAuth] = useState(false);
@@ -124,6 +125,9 @@ function App() {
                               <Link to="/dashboard" className="nav-link">Dashboard</Link>
                             </li>
                             <li className="nav-item">
+                              <Link to="/banner" className="nav-link">Banner</Link>
+                            </li>
+                            <li className="nav-item">
                               <Link className="nav-link" onClick={() => {
                                 cerrarSesion();
                               }}>Cerrar Sesión</Link>
@@ -152,6 +156,9 @@ function App() {
                       <li className="nav-item">
                         <Link to="/register" className="nav-link">Registrarse</Link>
                       </li>
+                      <li className="nav-item">
+                        <Link to="/contact" className="nav-link">Contacto</Link>
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -162,16 +169,17 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/About" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/users" element={auth && localStorage.getItem("level") === "2" ? <Users /> : <Home />} />
           <Route path="/vehicles" element={auth ? <Vehicles /> : <Home />} />
           <Route path="/services" element={auth ? <Services /> : <Home />} />
           <Route path="/repairs" element={auth ? <Repairs /> : <Home />} />
           <Route path="/histories" element={auth ? <Histories /> : <Home />} />
           <Route path="/histories/:id" element={auth ? <ShowHistory /> : <Home />} />
-          <Route path="/dashboard" element={auth && localStorage.getItem("level") === "2" ? <Dashboard /> : <Login />} />
+          <Route path="/dashboard" element={auth && localStorage.getItem("level") === "2" ? <Dashboard /> : <Home />} />
+          <Route path="/banner" element={auth && localStorage.getItem("level") == "2" ? <Banner /> : <Home />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

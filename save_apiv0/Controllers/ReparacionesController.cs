@@ -15,7 +15,7 @@ namespace save_apiv0.Controllers
 {
     public class ReparacionesController : ApiController
     {
-        private Model4 db = new Model4();
+        private Model1 db = new Model1();
 
         // GET: api/Reparaciones
         public IQueryable<Reparacion> GetReparacion()

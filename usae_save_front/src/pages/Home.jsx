@@ -1,7 +1,21 @@
 import { Carousel } from "react-bootstrap";
 import "./Home.css";
+import { useEffect, useState } from "react";
 
 export const Home = () => {
+
+    const [imagenes, setImagenes] = useState([])
+
+    const getImagenes = async () => {
+        const res = await fetch('api/ImagenBanners')
+        const data = await res.json()
+        setImagenes(data)
+    };
+
+    useEffect(() => {
+        getImagenes()
+    }, []);
+
     return (
         <div className="noS container-fluid fade-in">
             <div className="row text-center">
@@ -15,7 +29,9 @@ export const Home = () => {
                         <Carousel.Item>
                             <img
                                 className="d-block w-100"
-                                src="/img/BannerGTOjpg.jpg"
+                                src={
+                                    imagenes.length > 0 ? imagenes[0].imagen : "/img/BannerGTOjpg.jpg"
+                                }
                                 alt="First slide"
                             />
                             <Carousel.Caption>
@@ -24,7 +40,9 @@ export const Home = () => {
                         <Carousel.Item>
                             <img
                                 className="d-block w-100"
-                                src="/img/Banner2.png"
+                                src={
+                                    imagenes.length > 1 ? imagenes[1].imagen : "/img/BannerGTOjpg.jpg"
+                                }
                                 alt="Second slide"
                             />
                             <Carousel.Caption>
@@ -35,7 +53,9 @@ export const Home = () => {
                         <Carousel.Item>
                             <img
                                 className="d-block w-100"
-                                src="/img/Banner3.png"
+                                src={
+                                    imagenes.length > 2 ? imagenes[2].imagen : "/img/BannerGTOjpg.jpg"
+                                }
                                 alt="Third slide"
                             />
                             <Carousel.Caption>

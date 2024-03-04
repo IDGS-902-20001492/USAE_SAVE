@@ -385,7 +385,7 @@ export const Users = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {
+                            {users.length === 0 ? <tr><td colSpan="11" className="text-center">No hay usuarios</td></tr> :
                                 users.map((user) => (
                                     <tr key={user.id}>
                                         <td>{user.nombre}</td>

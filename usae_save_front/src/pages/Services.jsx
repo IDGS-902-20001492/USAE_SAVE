@@ -56,7 +56,12 @@ export const Services = () => {
         try {
             const res = await fetch("/api/Vehiculos");
             const data = await res.json();
-            setVehicles(data);
+            if (localStorage.getItem("level") === "2") {
+                setVehicles(data);
+            } else {
+                const veh = data.filter((veh) => veh.id_usuario === parseInt(localStorage.getItem("id")));
+                setVehicles(veh);
+            }
         } catch (error) {
             console.log(error);
         }

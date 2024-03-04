@@ -6,7 +6,8 @@ const Dashboard = () => {
 
     const [mileageHistory, setMileageHistory] = useState([]);
     const [mileageHistoryById, setMileageHistoryById] = useState([]);
-    const [vehicle, setVehicle] = useState({});
+
+    const [service, setService] = useState(true);
 
     const getMileageHistory = async () => {
         const res = await fetch("api/Dashboard/HistorialesKilometraje");
@@ -20,29 +21,28 @@ const Dashboard = () => {
         const res = await fetch("api/Dashboard/HistorialesKilometraje/" + id);
         const data = await res.json();
         setMileageHistoryById(data);
+        validateService(data.Vehiculo.id);
     }
 
     const validateService = async (id) => {
-        const res = await fetch("api/Servicios");
+        const res = await fetch("api/Servicios/Realizado?id=" + id);
         const data = await res.json();
-        const dataFiltred = data.filter((item) => item.id_vehiculo === id);
-        if (dataFiltred.length > 0) {
-            //Volvemos a filtrar para obtener el servicio con la fechaProgramada mas reciente
-            const dataFiltred2 = dataFiltred.filter((item) => item.fechaProgramada === dataFiltred.reduce((prev, current) => (prev.fechaProgramada > current.fechaProgramada) ? prev : current).fechaProgramada);
-            //Obtenemos la fecha de hoy
-            const today = new Date();
-            //Obtenemos la fecha del servicio
-            const serviceDate = new Date(dataFiltred2[0].fechaProgramada);
-            // Si la fecha del servicio más reciente se encuentra en el rango de 1 semana después de la fecha de hoy, no se debe realizar un servicio
-            if (serviceDate >= today && serviceDate <= new Date(today.getFullYear(), today.getMonth(), today.getDate() + 5)) {
-                return false;
-            } else {
-                return true;
-            }
+
+        if (data !== null) {
+
+            setService(data);
+        }
+    };
+
+    const couldNeedService = (mileageStart) => {
+        //Si faltan 500 km para llegar a 10000, podría necesitar un servicio
+        if (mileageStart % 10000 >= 9500) {
+            return true;
         } else {
-            return;
+            return false;
         }
     }
+
 
     const changeSeenStatus = async (id) => {
         //Primero buscamos el historial de kilometraje
@@ -116,53 +116,78 @@ const Dashboard = () => {
                 </div>
                 <div className='row p-3'>
                     {
-                        mileageHistory.map((item, index) => (
-                            <div key={index} className="col-sm-3 mb-3">
-                                <div className="card hoverWarning" data-bs-toggle="modal" data-bs-target="#modalNotificacion"
-                                    onClick={
-                                        () => {
-                                            getMileageHistoryById(item.id);
-                                            setVehicle(item.Vehiculo);
-                                        }
-                                    }
-                                    //Si el item.visto es falso, le damos una sombra verde al card, sino, le damos una sombra normal
-                                    style={
-                                        {
-                                            boxShadow: item.visto === false ?
-                                                //Hacemos sombras difuminadas
-                                                "0 0 1 0.2rem rgba(0, 255, 0, 0.25)" : "0 0 0 0.2rem rgba(0, 0, 0, 0.1)"
-                                        }}>
-                                    <div className="row" >
-                                        <div className="col-md-4">
-                                            <div className="container_img p-3">
-                                                <img src={item.Vehiculo.imagen} alt="imagen" className="imgAutomovil mt-3 " style={{ position: "cover" }} />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-8">
-                                            <div className="h5">
+                        mileageHistory.length > 0 ?
+                            (
+                                mileageHistory.map((item, index) => (
+                                    <div key={index} className="col-sm-3 mb-3">
+                                        <div className="card hoverWarning" data-bs-toggle="modal" data-bs-target="#modalNotificacion"
+                                            onClick={
+                                                () => {
+                                                    getMileageHistoryById(item.id);
+                                                    validateService(item.Vehiculo.id);
+                                                }
+                                            }
+                                            //Si el item.visto es falso, le damos una sombra verde al card, sino, le damos una sombra normal
+                                            style={
                                                 {
-                                                    item.visto === false ? (
-                                                        <i className="fas fa-exclamation-triangle alertAnimation" style={{ color: "green" }}></i>
-                                                    ) : null
-                                                }<label className="text-center"><b>{item.Vehiculo.modelo}</b></label>
+                                                    boxShadow: item.visto === false ?
+                                                        //Hacemos sombras difuminadas
+                                                        "0 0 1 0.5rem rgba(0, 255, 0, 0.35)" : "0 0 0 0.2rem rgba(0, 0, 0, 0.1)"
+                                                }}>
+                                            <div className="row p-3">
+                                                <div className="col-6 text-center" style={{ fontSize: '1.5em' }}>
+                                                    <div className="bg-info rounded">
+                                                        {
+                                                            couldNeedService(item.kilometrajeNuevo) ? (
+                                                                <i className="fas fa-screwdriver-wrench alertAnimation" style={{ color: "red" }}></i>
+                                                            ) : null
+                                                        }
+                                                    </div>
+
+                                                </div>
+                                                <div className="col-6 text-center" style={{ fontSize: '1.5em' }}>
+                                                    <div className="bg-info rounded">
+                                                        {
+                                                            item.visto === false ? (
+                                                                <i className="fas fa-exclamation-triangle alertAnimation" style={{ color: "green" }}></i>
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="row" >
+                                                <div className="col-md-4">
+                                                    <div className="container_img p-3">
+                                                        <img src={item.Vehiculo.imagen} alt="imagen" className="imgAutomovil mt-3 " style={{ position: "cover" }} />
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-8">
+                                                    <div className="h5">
+                                                        <label className="text-center"><b>{item.Vehiculo.modelo}</b></label>
+                                                    </div>
+
+                                                    <div className="card-body">
+                                                        <i className="fas fa-user"></i> <b>Titular:</b> {item.Vehiculo.Usuario.nombre} {item.Vehiculo.Usuario.apePaterno} {item.Vehiculo.Usuario.apeMaterno}
+                                                        <br />
+                                                        <i className="fa-solid fa-user-tag"></i> <b>Comparte con: </b>
+                                                        {
+                                                            item.Vehiculo.comparteCon === null || item.Vehiculo.comparteCon === "" ? " No compartido" : item.Vehiculo.comparteCon
+                                                        }
+                                                        <br />
+                                                        <i className="fas fa-tachometer-alt"></i> <b>Kilometraje:</b> {item.kilometrajeNuevo}
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            <div className="card-body">
-                                                <i className="fas fa-user"></i> <b>Titular:</b> {item.Vehiculo.Usuario.nombre} {item.Vehiculo.Usuario.apePaterno} {item.Vehiculo.Usuario.apeMaterno}
-                                                <br />
-                                                <i className="fa-solid fa-user-tag"></i> <b>Comparte con: </b>
-                                                {
-                                                    item.Vehiculo.comparteCon === null || item.Vehiculo.comparteCon === "" ? " No compartido" : item.Vehiculo.comparteCon
-                                                }
-                                                <br />
-                                                <i className="fas fa-tachometer-alt"></i> <b>Kilometraje:</b> {item.kilometrajeNuevo}
-                                            </div>
                                         </div>
                                     </div>
-
+                                ))) : (
+                                <div className="col-md-12">
+                                    <div className="alert alert-warning text-center">
+                                        <i className="fas fa-exclamation-triangle"></i> No hay notificaciones
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            )
                     }
                 </div>
                 {/*Generando un apartado modal de bootstrap y su boton*/}
@@ -191,36 +216,70 @@ const Dashboard = () => {
                                                             mileageHistoryById.kilometrajeAnterior !== mileageHistoryById.kilometrajeNuevo ? (
                                                                 <>
                                                                     {
-                                                                        !validateService(vehicle.id)
+                                                                        service
                                                                             ? (
-                                                                                <div className="alert alert-warning" role="alert">
-                                                                                    <i className="fas fa-exclamation-triangle"></i> <b>Es necesario realizar un servicio</b>
+                                                                                <>
+                                                                                    <div className="alert alert-danger" role="alert">
+                                                                                        <i className="fas fa-exclamation-triangle"></i> <b>Es necesario realizar un servicio</b>
+                                                                                    </div>
                                                                                     <br />
                                                                                     <button
-                                                                                        data-bs-dismiss="modal" aria-label="Close"
-                                                                                        className="btn btn-warning mt-3"
+                                                                                        className="btn btn-primary"
                                                                                         onClick={() => {
                                                                                             window.location.href = "/services";
                                                                                         }}
-                                                                                    >Ir a servicios</button>
-                                                                                </div>
+                                                                                    >
+                                                                                        <i className="fas fa-wrench"></i> Realizar servicio
+                                                                                    </button>
+                                                                                </>
                                                                             ) : (
-                                                                                <div className="alert alert-success" role="alert">
-                                                                                    <i className="fas fa-check"></i> <b>No es necesario realizar un servicio ya que hace poco se realizó uno.</b>
+
+                                                                                <div>
+                                                                                    {
+                                                                                        couldNeedService(mileageHistoryById.kilometrajeNuevo) ? (
+                                                                                            <div className="alert alert-warning" role="alert">
+                                                                                                <i className="fas fa-exclamation-triangle"></i> <b>Este vehiculo está a menos de 500 km de necesitar un servicio</b>
+                                                                                            </div>
+                                                                                        ) : (
+                                                                                            <div className="alert alert-success" role="alert">
+                                                                                                <i className="fas fa-check"></i> <b>No es necesario realizar un servicio</b>
+                                                                                            </div>
+                                                                                        )
+                                                                                    }
                                                                                 </div>
                                                                             )
                                                                     }
                                                                 </>
                                                             ) : (<>
-                                                                <div className="alert alert-success" role="alert">
-                                                                    <i className="fas fa-check"></i> <b>No es necesario realizar un servicio</b>
+                                                                <div>
+                                                                    {
+                                                                        couldNeedService(mileageHistoryById.kilometrajeNuevo) ? (
+                                                                            <div className="alert alert-warning" role="alert">
+                                                                                <i className="fas fa-exclamation-triangle"></i> <b>Este vehiculo está a menos de 500 km de necesitar un servicio</b>
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div className="alert alert-success" role="alert">
+                                                                                <i className="fas fa-check"></i> <b>No es necesario realizar un servicio</b>
+                                                                            </div>
+                                                                        )
+                                                                    }
                                                                 </div>
                                                             </>)
                                                         }
                                                     </>
                                                 ) : (
-                                                    <div className="alert alert-success" role="alert">
-                                                        <i className="fas fa-check"></i> <b>No es necesario realizar un servicio</b>
+                                                    <div>
+                                                        {
+                                                            couldNeedService(mileageHistoryById.kilometrajeNuevo) ? (
+                                                                <div className="alert alert-warning" role="alert">
+                                                                    <i className="fas fa-exclamation-triangle"></i> <b>Este vehiculo está a menos de 500 km de necesitar un servicio</b>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="alert alert-success" role="alert">
+                                                                    <i className="fas fa-check"></i> <b>No es necesario realizar un servicio</b>
+                                                                </div>
+                                                            )
+                                                        }
                                                     </div>
                                                 )
                                             }

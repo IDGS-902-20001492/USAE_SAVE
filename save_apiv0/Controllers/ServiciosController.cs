@@ -17,7 +17,7 @@ namespace save_apiv0.Controllers
 {
     public class ServiciosController : ApiController
     {
-        private Model4 db = new Model4();
+        private Model1 db = new Model1();
 
         // GET: api/Servicios
         public IQueryable<Servicio> GetServicio()
@@ -191,6 +191,39 @@ namespace save_apiv0.Controllers
         private bool ServicioExists(int id)
         {
             return db.Servicio.Count(e => e.id == id) > 0;
+        }
+
+
+        //Metodo para identificar si se ha realizado un servicio a partir de su id de vehiculo
+        // GET: api/Servicios/Realizado/5
+        [HttpGet]
+        [Route("api/Servicios/Realizado")]
+        [ResponseType(typeof(Servicio))]
+        public IHttpActionResult GetServicioRealizado(int id)
+        {
+           //Mediante el id de vehiculo buscamos los servicios que se han realizado y solo dejamos el mas reciente
+           var servicio = db.Servicio.Where(x => x.id_vehiculo == id && x.estatus == true).OrderByDescending(x => x.fechaProgramada).FirstOrDefault();
+
+           //Si la fechaProgramada del servicio esta entre 1 semana atras y una semana adelante de hoy retornamos un false
+           var hoy = DateTime.Now;
+            var semanaAtras = hoy.AddDays(-7);
+            var semanaAdelante = hoy.AddDays(7);
+
+            if (servicio != null)
+            {
+                if (servicio.fechaProgramada >= semanaAtras && servicio.fechaProgramada <= semanaAdelante)
+                {
+                    return Ok(false);
+                }
+                else
+                {
+                    return Ok(true);
+                }
+            }
+            else
+            {
+                return Ok(true);
+            }
         }
 
 

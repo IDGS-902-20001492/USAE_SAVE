@@ -94,37 +94,44 @@ const Histories = () => {
             }
             <div className="container">
                 <div className="row">
-                    {cars.map((car) => (
-                        <div key={car.id}>
-                            <div className="card mb-3">
-                                <div className="row">
-                                    <div className="col-md-4">
-                                        <div className="container_img">
-                                            <img src={car.imagen} alt="imagen" className="imgAutomovil" />
-                                        </div>
-                                    </div>
-                                    <div className="col-md-8">
-                                        <div className="card-body">
-                                            <div className="row">
-                                                <div className="col-6">
-                                                    <h5 className="card-title">{car.marca} {car.modelo}</h5>
-                                                    <p className="card-text"><b>Kilometeraje:</b> {car.kilometrajeRegistro} <b>Km</b></p>
-                                                    <p className="card-text"><b>Placas:</b> {car.placas}</p>
-                                                    <Link to={`/histories/${car.id}`} className="btn btn-primary">Ver historial</Link>
+                    {cars.length > 0 ?
+                        (
+                            cars.map((car) => (
+                                <div key={car.id}>
+                                    <div className="card mb-3">
+                                        <div className="row">
+                                            <div className="col-md-4">
+                                                <div className="container_img">
+                                                    <img src={car.imagen} alt="imagen" className="imgAutomovil" />
                                                 </div>
-                                                <div className="col-6">
-                                                    <p className="card-text"><b>Titular del vehiculo:</b> {car.Usuario.nombre} {car.Usuario.apePaterno} {car.Usuario.apeMaterno}</p>
-                                                    <p className="card-text"><b>Comparte con:</b> {
-                                                        car.comparteCon === null || car.comparteCon === "" ? "No compartido" : car.comparteCon
-                                                    }</p>
+                                            </div>
+                                            <div className="col-md-8">
+                                                <div className="card-body">
+                                                    <div className="row">
+                                                        <div className="col-6">
+                                                            <h5 className="card-title">{car.marca} {car.modelo}</h5>
+                                                            <p className="card-text"><b>Kilometeraje:</b> {car.kilometrajeRegistro} <b>Km</b></p>
+                                                            <p className="card-text"><b>Placas:</b> {car.placas}</p>
+                                                            <Link to={`/histories/${car.id}`} className="btn btn-primary">Ver historial</Link>
+                                                        </div>
+                                                        <div className="col-6">
+                                                            <p className="card-text"><b>Titular del vehiculo:</b> {car.Usuario.nombre} {car.Usuario.apePaterno} {car.Usuario.apeMaterno}</p>
+                                                            <p className="card-text"><b>Comparte con:</b> {
+                                                                car.comparteCon === null || car.comparteCon === "" ? "No compartido" : car.comparteCon
+                                                            }</p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            ))) : (
+                            <div className="col-12 text-center">
+                                <h3 className="text-white">No se encontraron vehiculos</h3>
                             </div>
-                        </div>
-                    ))}
+                        )
+                    }
                 </div>
             </div>
         </div>

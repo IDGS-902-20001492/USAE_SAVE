@@ -5,15 +5,16 @@ using System.Linq;
 
 namespace save_apiv0.Models
 {
-    public partial class Model4 : DbContext
+    public partial class Model1 : DbContext
     {
-        public Model4()
-            : base("name=Model4")
+        public Model1()
+            : base("name=Model1")
         {
         }
 
         public virtual DbSet<Historial> Historial { get; set; }
         public virtual DbSet<HistorialKilometraje> HistorialKilometraje { get; set; }
+        public virtual DbSet<ImagenBanner> ImagenBanner { get; set; }
         public virtual DbSet<Pieza> Pieza { get; set; }
         public virtual DbSet<Reparacion> Reparacion { get; set; }
         public virtual DbSet<Servicio> Servicio { get; set; }
@@ -29,6 +30,10 @@ namespace save_apiv0.Models
             modelBuilder.Entity<HistorialKilometraje>()
                 .Property(e => e.kilometrajeNuevo)
                 .HasPrecision(10, 2);
+
+            modelBuilder.Entity<ImagenBanner>()
+                .Property(e => e.imagen)
+                .IsUnicode(false);
 
             modelBuilder.Entity<Pieza>()
                 .Property(e => e.descripcion)

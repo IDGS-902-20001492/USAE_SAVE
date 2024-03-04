@@ -14,7 +14,7 @@ namespace save_apiv0.Controllers
 {
     public class UsuariosController : ApiController
     {
-        private Model4 db = new Model4();
+        private Model1 db = new Model1();
 
         // GET: api/Usuarios
         public IQueryable<Usuario> GetUsuario()
