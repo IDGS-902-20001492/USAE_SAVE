@@ -3,6 +3,7 @@ import "./Login.css";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
+import { API_URL } from "../Api_url";
 
 export const Login = () => {
 
@@ -42,7 +43,7 @@ export const Login = () => {
             data.contrasena = cleanInput(data.contrasena);
 
             data.contrasena = encodePassword(data.contrasena);
-            await fetch("/api/login", {
+            await fetch(API_URL + "/api/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -60,18 +61,24 @@ export const Login = () => {
                         //Damos un time out para que se alcance a mostrar el mensaje de bienvenida                        
                         mostrarSweetAlert("Bienvenido(a)", data.nombre + " " + data.apePaterno + " " + data.apeMaterno, "success");
                         setTimeout(() => {
-                            if (data.permiso === "2") {
-                                window.location.href = "/users";
+                            //Primero recargamos la página
+                            window.location.reload();
+                            //Luego redireccionamos dependiendo del level
+                            if (localStorage.getItem("level") === "1") {
+                                window.location.href = "/vehicles";
                             } else {
-                                window.location.href = "/services";
+                                window.location.href = "/users";
                             }
                         }, 1600);
                     });
                 } else {
                     //Si el error es 401, entonces el usuario no está registrado
-                    if (response.status === 401 || response.status === 400 || response.status === 404) {
+                    if (response.status === 404) {
                         mostrarSweetAlert("Error", "El usuario no está registrado", "error");
-                    } else {
+                    } else if (response.status === 401 || response.status === 403 || response.status === 400) {
+                        mostrarSweetAlert("Error", "Usuario o contraseña incorrectos", "error");
+                    }
+                    else {
                         mostrarSweetAlert("Advertencia", "Servidor desconectado", "warning");
                     }
                 }

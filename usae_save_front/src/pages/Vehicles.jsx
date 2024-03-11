@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import "./Vehicles.css";
+import { API_URL } from "../Api_url";
 
 const Vehicles = () => {
     const [car, setCar] = useState({
@@ -36,7 +37,7 @@ const Vehicles = () => {
 
     const getCars = async () => {
         try {
-            const res = await fetch("/api/Vehiculos");
+            const res = await fetch(API_URL + "/api/Vehiculos");
             const data = await res.json();
 
             if (localStorage.getItem("level") === "2") {
@@ -54,7 +55,7 @@ const Vehicles = () => {
 
     const getUsers = async () => {
         try {
-            const res = await fetch("/api/Usuarios");
+            const res = await fetch(API_URL + "/api/Usuarios");
             const data = await res.json();
             if (localStorage.getItem("level") === "2") {
                 setUsers(data);
@@ -102,7 +103,7 @@ const Vehicles = () => {
                 mostrarSweetAlert("Error", "Los siguientes campos están vacios: " + camposVacios, "error");
                 return;
             } else {
-                await fetch("/api/Vehiculos", {
+                await fetch(API_URL + "/api/Vehiculos", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -159,7 +160,7 @@ const Vehicles = () => {
                 mostrarSweetAlert("Error", "Los siguientes campos están vacios: " + camposVacios, "error");
                 return;
             } else {
-                await fetch(`/api/Vehiculos/${car.id}`, {
+                await fetch(API_URL + `/api/Vehiculos/${car.id}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json"
@@ -211,7 +212,7 @@ const Vehicles = () => {
                 cancelButtonText: "No, cancelar",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    fetch(`/api/Vehiculos/${id}`, {
+                    fetch(API_URL + `/api/Vehiculos/${id}`, {
                         method: "DELETE",
                     }).catch((error) => {
                         console.log(error);
@@ -247,7 +248,7 @@ const Vehicles = () => {
         const nombre = document.getElementById("buscar").value;
 
         try {
-            const res = await fetch(`/api/Vehiculos/Search?query=${nombre}`);
+            const res = await fetch(API_URL + `/api/Vehiculos/Search?query=${nombre}`);
             const data = await res.json();
             setAllCarts(data);
             setSearch(true);
@@ -306,7 +307,7 @@ const Vehicles = () => {
         setModify(true);
         //Ponemos los datos del usuario en el formulario
         try {
-            const res = await fetch(`/api/Vehiculos/${id}`);
+            const res = await fetch(API_URL + `/api/Vehiculos/${id}`);
             const data = await res.json();
             setCar(data);
         } catch (error) {
@@ -385,7 +386,7 @@ const Vehicles = () => {
         } else {
             try {
                 //Haciendo un put con 2 parametros
-                await fetch(`/api/Vehiculos/UpdateKilometraje?id=${cocheAsignado.id}&kilometraje=${kilometraje}`, {
+                await fetch(API_URL + `/api/Vehiculos/UpdateKilometraje?id=${cocheAsignado.id}&kilometraje=${kilometraje}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json"
@@ -441,7 +442,7 @@ const Vehicles = () => {
                 } else if (kiloAnterior > document.getElementById("updateKilometraje").value) {
                     Swal.showValidationMessage("El kilometraje no puede ser menor al registrado");
                 }
-                return fetch(`/api/Vehiculos/UpdateKilometraje?id=${cartId}&kilometraje=${document.getElementById("updateKilometraje").value}`, {
+                return fetch(API_URL + `/api/Vehiculos/UpdateKilometraje?id=${cartId}&kilometraje=${document.getElementById("updateKilometraje").value}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json"
@@ -678,12 +679,17 @@ const Vehicles = () => {
                                                 </div>
                                             </div>
                                             <div className="row mt-3">
-                                                <div className="col-6">
+                                                <div className="col-4">
+                                                    <button className="btn btn-info w-100" onClick={() => actKilometrajeSweetAlert(carCard.id, carCard.kilometrajeRegistro, carCard)}>
+                                                        <i className="fas fa-arrow-up"></i> Act. KM
+                                                    </button>
+                                                </div>
+                                                <div className="col-4">
                                                     <button className="btn btn-success w-100" onClick={() => modifyModal(carCard.id)}>
                                                         <i className="fas fa-edit"></i> Editar
                                                     </button>
                                                 </div>
-                                                <div className="col-6">
+                                                <div className="col-4">
                                                     <button className="btn btn-danger w-100" onClick={() => deleteUser(carCard.id)}>
                                                         <i className="fas fa-trash-alt"></i> Eliminar
                                                     </button>

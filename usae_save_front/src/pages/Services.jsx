@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import "./Users.css"
 import "./Services.css"
 import Swal from "sweetalert2";
+import { API_URL } from "../Api_url";
 
 export const Services = () => {
 
@@ -18,7 +19,8 @@ export const Services = () => {
         descripcion: "",
         presupuesto: 0,
         id_vehiculo: 0,
-        estatus: true
+        estatus: true,
+        estatusServicio: false
     });
 
     const [showModal, setShowModal] = useState(false);
@@ -39,7 +41,7 @@ export const Services = () => {
 
     const getServices = async () => {
         try {
-            const res = await fetch("/api/Servicios");
+            const res = await fetch(API_URL + "/api/Servicios");
             const data = await res.json();
             if (localStorage.getItem("level") === "2") {
                 setServices(data);
@@ -54,7 +56,7 @@ export const Services = () => {
 
     const getVehicles = async () => {
         try {
-            const res = await fetch("/api/Vehiculos");
+            const res = await fetch(API_URL + "/api/Vehiculos");
             const data = await res.json();
             if (localStorage.getItem("level") === "2") {
                 setVehicles(data);
@@ -69,7 +71,7 @@ export const Services = () => {
 
     const getUsers = async () => {
         try {
-            const res = await fetch("/api/Usuarios");
+            const res = await fetch(API_URL + "/api/Usuarios");
             const data = await res.json();
             setUsers(data);
         } catch (error) {
@@ -92,7 +94,7 @@ export const Services = () => {
                 mostrarSweetAlert("Error", "Los siguientes campos están vacíos: " + camposVacios, "error");
                 return;
             } else {
-                await fetch("/api/Servicios", {
+                await fetch(API_URL + "/api/Servicios", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -145,7 +147,7 @@ export const Services = () => {
                 mostrarSweetAlert("Error", "Los siguientes campos están vacíos: " + camposVacios, "error");
                 return;
             } else {
-                await fetch(`/api/Servicios/${newService.id}`, {
+                await fetch(API_URL + `/api/Servicios/${newService.id}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json"
@@ -186,6 +188,37 @@ export const Services = () => {
         }
     }
 
+    const changeServiceStatus = async (service) => {
+        try {
+
+            if (service.estatusServicio === true) {
+                service.estatusServicio = false;
+            } else {
+                service.estatusServicio = true;
+            }
+
+            const res = await fetch(API_URL + `/api/Servicios/${service.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(service)
+            });
+
+            if (res.ok === true) {
+                mostrarSweetAlert("Servicio concluido", "Estatus de servicio cambiado", "success");
+                getServices();
+            } else {
+                //Impresión de error en consola
+                console.log(res);
+                mostrarSweetAlert("Error", "El servicio no se pudo concluir", "error");
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     const deleteService = async (id) => {
         try {
             Swal.fire({
@@ -197,7 +230,7 @@ export const Services = () => {
                 cancelButtonText: "No, cancelar",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    fetch(`/api/Servicios/${id}`, {
+                    fetch(API_URL + `/api/Servicios/${id}`, {
                         method: "DELETE",
                     }).catch((error) => {
                         console.log(error);
@@ -243,7 +276,7 @@ export const Services = () => {
             getServices();
         } else {
             try {
-                const res = await fetch(`/api/Servicios/Search?id=${idUsuario}&&orden=${orden}`);
+                const res = await fetch(API_URL + `/api/Servicios/Search?id=${idUsuario}&&orden=${orden}`);
                 const data = await res.json();
                 setServices(data);
             } catch (error) {
@@ -260,13 +293,13 @@ export const Services = () => {
             if (document.getElementById("buscar").value === "Filtrar por persona") {
 
                 if (localStorage.getItem("level") === "2") {
-                    let res = await fetch(`/api/Servicios/Search?id=${0}&&orden=${orden}`);
+                    let res = await fetch(API_URL + `/api/Servicios/Search?id=${0}&&orden=${orden}`);
                     let data = await res.json();
                     setLabelOrder("Servicios más antiguos");
                     setServices(data);
                 } else {
                     let idUser = parseInt(localStorage.getItem("id"));
-                    let res = await fetch(`/api/Servicios/Search?id=${idUser}&&orden=${orden}`);
+                    let res = await fetch(API_URL + `/api/Servicios/Search?id=${idUser}&&orden=${orden}`);
                     let data = await res.json();
                     setLabelOrder("Servicios más antiguos");
                     setServices(data);
@@ -278,13 +311,13 @@ export const Services = () => {
             if (document.getElementById("buscar").value === "Filtrar por persona") {
 
                 if (localStorage.getItem("level") === "2") {
-                    let res = await fetch(`/api/Servicios/Search?id=${0}&&orden=${orden}`);
+                    let res = await fetch(API_URL + `/api/Servicios/Search?id=${0}&&orden=${orden}`);
                     let data = await res.json();
                     setLabelOrder("Servicios más recientes");
                     setServices(data);
                 } else {
                     let idUser = parseInt(localStorage.getItem("id"));
-                    let res = await fetch(`/api/Servicios/Search?id=${idUser}&&orden=${orden}`);
+                    let res = await fetch(API_URL + `/api/Servicios/Search?id=${idUser}&&orden=${orden}`);
                     let data = await res.json();
                     setLabelOrder("Servicios más recientes");
                     setServices(data);
@@ -302,7 +335,7 @@ export const Services = () => {
             getServices();
         } else {
             try {
-                const res = await fetch(`/api/Servicios/SearchByDate?fecha=${fecha}`);
+                const res = await fetch(API_URL + `/api/Servicios/SearchByDate?fecha=${fecha}`);
                 const data = await res.json();
                 if (localStorage.getItem("level") === "2") {
                     setServices(data);
@@ -361,7 +394,7 @@ export const Services = () => {
         setModify(true);
         //Ponemos los datos del usuario en el formulario
         try {
-            const res = await fetch(`/api/Servicios/${id}`);
+            const res = await fetch(API_URL + `/api/Servicios/${id}`);
             const data = await res.json();
 
             //Le quitamos la hora al datetiem original para que se muestre en el input
@@ -491,6 +524,7 @@ export const Services = () => {
                                 <th>Presupuesto</th>
                                 <th>Vehiculo</th>
                                 <th>Principal</th>
+                                <th>Terminado</th>
                                 <th>Editar</th>
                                 <th>Borrar</th>
                             </tr>
@@ -511,6 +545,24 @@ export const Services = () => {
                                             <td>${serv.presupuesto}</td>
                                             <td>{serv.Vehiculo.modelo}</td>
                                             <td>{serv.Vehiculo.Usuario.nombre} {serv.Vehiculo.Usuario.apePaterno} {serv.Vehiculo.Usuario.apeMaterno}</td>
+                                            <td>{
+                                                serv.estatusServicio ?
+                                                    <button className="btn btn-secondary" onClick={
+                                                        () => {
+                                                            changeServiceStatus(serv);
+                                                        }
+                                                    }>
+                                                        <i className="fas fa-check"></i>
+                                                    </button>
+                                                    :
+                                                    <button className="btn btn-secondary" onClick={
+                                                        () => {
+                                                            changeServiceStatus(serv);
+                                                        }
+                                                    }>
+                                                        <i className="fas fa-times"></i>
+                                                    </button>
+                                            }</td>
                                             <td>
                                                 <button className="btn btn-success" onClick={
                                                     () => {
@@ -534,7 +586,7 @@ export const Services = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="11" className="text-center"><i className="fas fa-exclamation-triangle"></i>No hay servicios registrados para esa fecha ó persona.</td>
+                                        <td colSpan="12" className="text-center"><i className="fas fa-exclamation-triangle"></i>No hay servicios registrados para esa fecha ó persona.</td>
                                     </tr>
                                 )
 
@@ -545,75 +597,103 @@ export const Services = () => {
                 {/*Creamos cards para la versión movil*/}
                 <div id="movilUsers" className="col-md-12">
                     {
-                        services.map((serv) => (
-                            <div className="card mt-2" key={serv.id}>
-                                <div className="card-body shadow rounded">
-                                    <div className="row">
-                                        <div className="col-6">
-                                            <div className="text-center">
-                                                {
-                                                    serv.Vehiculo.imagen === null ?
-                                                        <img src="/img/coche.png" className="img-fluid rounded" alt="Imagen de usuario" />
-                                                        :
-                                                        <img src={serv.Vehiculo.imagen} className="img-fluid rounded" alt="Imagen de usuario" />
-                                                }
+                        services.length > 0 ? (
+                            services.map((serv) => (
+                                <div className="card mt-2" key={serv.id}>
+                                    <div className="card-body shadow rounded">
+                                        <div className="row">
+                                            <div className="col-6">
+                                                <div className="text-center">
+                                                    {
+                                                        serv.Vehiculo.imagen === null ?
+                                                            <img src="/img/coche.png" className="img-fluid rounded" alt="Imagen de usuario" />
+                                                            :
+                                                            <img src={serv.Vehiculo.imagen} className="img-fluid rounded" alt="Imagen de usuario" />
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div className="col-6">
+                                                <h5 className="card-title">{serv.Vehiculo.modelo}</h5>
+                                                <p className="card-text">{serv.Vehiculo.Usuario.nombre} {serv.Vehiculo.Usuario.apePaterno} {serv.Vehiculo.Usuario.apeMaterno}</p>
                                             </div>
                                         </div>
-                                        <div className="col-6">
-                                            <h5 className="card-title">{serv.Vehiculo.modelo}</h5>
-                                            <p className="card-text">{serv.Vehiculo.Usuario.nombre} {serv.Vehiculo.Usuario.apePaterno} {serv.Vehiculo.Usuario.apeMaterno}</p>
+                                        <div className="row mt-2">
+                                            <div className="col-6">
+                                                <p className="card-text"><b>Kilometraje al momento del servicio:</b> {serv.kilometrajeServicio} km</p>
+                                                <p className="card-text"><b>Tipo de servicio:</b> {serv.tipoServicio}</p>
+                                            </div>
+                                            <div className="col-6">
+                                                <p className="card-text"><b>Dirección de servicio:</b> {serv.ubicacionServicio}</p>
+                                                <p className="card-text"><b>Mecánico ó taller:</b> {serv.mecanico}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="row mt-2">
-                                        <div className="col-6">
-                                            <p className="card-text"><b>Kilometraje al momento del servicio:</b> {serv.kilometrajeServicio} km</p>
-                                            <p className="card-text"><b>Tipo de servicio:</b> {serv.tipoServicio}</p>
+                                        <div className="row mt-2">
+                                            <div className="col-6">
+                                                <p className="card-text"><b>Presupuesto:</b> ${serv.presupuesto}</p>
+                                            </div>
+                                            <div className="col-6">
+                                                <p className="card-text"><b>Fecha programada:</b> {sortDate(serv.fechaProgramada)}</p>
+                                            </div>
                                         </div>
-                                        <div className="col-6">
-                                            <p className="card-text"><b>Dirección de servicio:</b> {serv.ubicacionServicio}</p>
-                                            <p className="card-text"><b>Mecánico ó taller:</b> {serv.mecanico}</p>
-                                        </div>
-                                    </div>
-                                    <div className="row mt-2">
-                                        <div className="col-6">
-                                            <p className="card-text"><b>Presupuesto:</b> ${serv.presupuesto}</p>
-                                        </div>
-                                        <div className="col-6">
-                                            <p className="card-text"><b>Fecha programada:</b> {sortDate(serv.fechaProgramada)}</p>
-                                        </div>
-                                    </div>
 
-                                    <div className="row mt-2">
-                                        <div className="col-12">
-                                            <p className="card-text"><b>Descripción:</b> {
-                                                serv.descripcion === null ? "Sin descripción" : serv.descripcion
-                                            }</p>
+                                        <div className="row mt-2">
+                                            <div className="col-12">
+                                                <p className="card-text"><b>Descripción:</b> {
+                                                    serv.descripcion === null ? "Sin descripción" : serv.descripcion
+                                                }</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-6">
-                                            <button className="btn btn-success w-100 mt-2" onClick={
-                                                () => {
-                                                    modifyModal(serv.id);
+                                        <div className="row">
+                                            <div className="col-4">
+                                                {
+                                                    serv.estatusServicio ?
+                                                        <button className="btn btn-secondary w-100 mt-2" onClick={
+                                                            () => {
+                                                                changeServiceStatus(serv);
+                                                            }
+                                                        }>
+                                                            <i className="fas fa-check"> </i>Cambiar
+                                                        </button>
+                                                        :
+                                                        <button className="btn btn-secondary w-100 mt-2" onClick={
+                                                            () => {
+                                                                changeServiceStatus(serv);
+                                                            }
+                                                        }>
+                                                            <i className="fas fa-times"> </i> Cambiar
+                                                        </button>
                                                 }
-                                            }>
-                                                <i className="fas fa-edit"> </i>Editar
-                                            </button>
-                                        </div>
-                                        <div className="col-6">
-                                            <button className="btn btn-danger w-100 mt-2"
-                                                onClick={
+                                            </div>
+                                            <div className="col-4">
+                                                <button className="btn btn-success w-100 mt-2" onClick={
                                                     () => {
-                                                        deleteService(serv.id);
+                                                        modifyModal(serv.id);
                                                     }
                                                 }>
-                                                <i className="fas fa-trash-alt"> </i>Eliminar
-                                            </button>
+                                                    <i className="fas fa-edit"> </i>Editar
+                                                </button>
+                                            </div>
+                                            <div className="col-4">
+                                                <button className="btn btn-danger w-100 mt-2"
+                                                    onClick={
+                                                        () => {
+                                                            deleteService(serv.id);
+                                                        }
+                                                    }>
+                                                    <i className="fas fa-trash-alt"> </i>Eliminar
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            ))
+                        ) : (
+                            <div className="card mt-2">
+                                <div className="card-body">
+                                    <h5 className="card-title text-center">No hay servicios registrados para esa fecha ó persona.</h5>
+                                </div>
                             </div>
-                        ))
+                        )
                     }
                 </div>
             </div>
@@ -642,9 +722,13 @@ export const Services = () => {
                                     <select className="form-select" aria-label="Default select example" name="id_vehiculo" id="id_vehiculo" value={newService.id_vehiculo} onChange={handleSelectChange}>
                                         <option defaultValue>Selecciona una opción</option>
                                         {
-                                            vehicles.map((vehicle) => (
-                                                <option key={vehicle.id} value={vehicle.id}>{vehicle.modelo} - {vehicle.Usuario.nombre} {vehicle.Usuario.apePaterno} {vehicle.Usuario.apeMaterno}</option>
-                                            ))
+                                            vehicles.length > 0 ? (
+                                                vehicles.map((vehicle) => (
+                                                    <option key={vehicle.id} value={vehicle.id}>{vehicle.modelo} - {vehicle.Usuario.nombre} {vehicle.Usuario.apePaterno} {vehicle.Usuario.apeMaterno}</option>
+                                                ))
+                                            ) : (
+                                                <option value="0">No hay vehículos registrados</option>
+                                            )
                                         }
                                     </select>
                                 </div>

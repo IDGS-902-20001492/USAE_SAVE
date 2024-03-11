@@ -19,6 +19,7 @@
     <WebStackScaffolding_DbContextTypeFullName>save_apiv0.Models.Model1</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
     <ProjectView>ProjectFiles</ProjectView>
+    <NameOfLastUsedPublishProfile>C:\Users\quiro\OneDrive\Tareas y trabajos UTL\OnceavoCuatrimestre%28FINAL%29\USAE_SAVE\save_apiv0\Properties\PublishProfiles\FTPProfile.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

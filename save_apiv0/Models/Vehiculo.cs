@@ -50,24 +50,16 @@ namespace save_apiv0.Models
 
         public bool? estatus { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [JsonIgnore]
-
         public virtual ICollection<Historial> Historial { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [JsonIgnore]
-
         public virtual ICollection<HistorialKilometraje> HistorialKilometraje { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [JsonIgnore]
-
         public virtual ICollection<Reparacion> Reparacion { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [JsonIgnore]
-
         public virtual ICollection<Servicio> Servicio { get; set; }
 
         public virtual Usuario Usuario { get; set; }

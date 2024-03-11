@@ -153,14 +153,14 @@ namespace save_apiv0.Controllers
                     {
                         Historial historial = new Historial();
                         historial.id_servicio = servicio.id;
-                        historial.id_vehiculo = servicio.id_vehiculo;
+                        historial.id_vehiculo = (int)servicio.id_vehiculo;
                         db.Historial.Add(historial);
                     }
                     else
                     {
                         //Si el historial existe, lo actualizamos
                         Historial historial = db.Historial.Where(x => x.id_servicio == servicio.id).First();
-                        historial.id_vehiculo = servicio.id_vehiculo;
+                        historial.id_vehiculo = (int)servicio.id_vehiculo;
                         db.Entry(historial).State = EntityState.Modified;
                     }
 
@@ -242,7 +242,7 @@ namespace save_apiv0.Controllers
             //Guardamos el servicio en el historial
             Historial historial = new Historial();
             historial.id_servicio = servicio.id;
-            historial.id_vehiculo = servicio.id_vehiculo;
+            historial.id_vehiculo = (int)servicio.id_vehiculo;
             db.Historial.Add(historial);
 
             db.SaveChanges();

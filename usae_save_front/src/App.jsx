@@ -2,7 +2,6 @@ import { Login } from "./pages/Login"
 import { Register } from "./pages/Register"
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
-import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Users } from "./pages/Users";
 import './Navbar.css';
 import Vehicles from "./pages/Vehicles";

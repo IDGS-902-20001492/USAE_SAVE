@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./Register.css"
 import Swal from "sweetalert2";
+import { API_URL } from "../Api_url";
+import { Navigate } from "react-router-dom";
 
 export const Register = () => {
 
@@ -23,7 +25,7 @@ export const Register = () => {
     const addUser = async () => {
         try {
             newUser.contrasena = encodePassword(newUser.contrasena);
-            await fetch("/api/registro", {
+            await fetch(API_URL + "/api/registro", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -36,7 +38,7 @@ export const Register = () => {
                     mostrarSweetAlert("Registro exitoso", "El usuario se registró correctamente", "success");
                     //Nos esperamos 1 segundo para redireccionar
                     setTimeout(() => {
-                        window.location.href = "/login";
+                        return Navigate("/login");
                     }, 1000);
                 } else {
                     mostrarSweetAlert("Error", "El usuario no se pudo registrar", "error");

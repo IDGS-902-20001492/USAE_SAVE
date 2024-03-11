@@ -1,7 +1,2 @@
-jSanchezC@gmail.com
+j_sanchezc@seg.guanajuato.gob.mx
 12345678
-
-normal: maLuzFlores@gmail.com
-12345678
-
-<add name="Model13" connectionString="data source=DESKTOP-LOBNEKH\SQLEXPRESS;initial catalog=usae_save;integrated security=True;trustservercertificate=True;MultipleActiveResultSets=True;App=EntityFramework" providerName="System.Data.SqlClient" />

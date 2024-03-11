@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import DashboardGraphics from "../components/DashboardGraphics"
 import "./Dashboard.css";
+import { API_URL } from "../Api_url";
 
 const Dashboard = () => {
 
@@ -10,7 +11,7 @@ const Dashboard = () => {
     const [service, setService] = useState(true);
 
     const getMileageHistory = async () => {
-        const res = await fetch("api/Dashboard/HistorialesKilometraje");
+        const res = await fetch(API_URL + "/api/Dashboard/HistorialesKilometraje");
         const data = await res.json();
         //Filtramos el historial donde el vehiculo tenga el estatus en true
         const dataFiltred = data.filter((item) => item.Vehiculo.estatus === true);
@@ -18,26 +19,34 @@ const Dashboard = () => {
     }
 
     const getMileageHistoryById = async (id) => {
-        const res = await fetch("api/Dashboard/HistorialesKilometraje/" + id);
-        const data = await res.json();
-        setMileageHistoryById(data);
-        validateService(data.Vehiculo.id);
+        if (id) {
+            const res = await fetch(API_URL + "/api/Dashboard/HistorialesKilometraje/" + id);
+            const data = await res.json();
+            setMileageHistoryById(data);
+            validateService(data.Vehiculo.id);
+        }
     }
 
     const validateService = async (id) => {
-        const res = await fetch("api/Servicios/Realizado?id=" + id);
-        const data = await res.json();
+        if (id) {
+            const res = await fetch(API_URL + "/api/Servicios/Realizado?id=" + id);
+            const data = await res.json();
 
-        if (data !== null) {
+            if (data !== null) {
 
-            setService(data);
+                setService(data);
+            }
         }
     };
 
     const couldNeedService = (mileageStart) => {
         //Si faltan 500 km para llegar a 10000, podría necesitar un servicio
-        if (mileageStart % 10000 >= 9500) {
-            return true;
+        if (mileageStart !== null) {
+            if (mileageStart % 10000 >= 9500) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -45,24 +54,26 @@ const Dashboard = () => {
 
 
     const changeSeenStatus = async (id) => {
-        //Primero buscamos el historial de kilometraje
-        const res = await fetch("api/Dashboard/HistorialesKilometraje/" + id);
-        const data = await res.json();
+        if (id) {
+            //Primero buscamos el historial de kilometraje
+            const res = await fetch(API_URL + "/api/Dashboard/HistorialesKilometraje/" + id);
+            const data = await res.json();
 
-        if (data.visto === false) {
-            //Cambiamos el estado de visto a true
-            data.visto = true;
-            //Actualizamos el historial de kilometraje
-            await fetch("api/Dashboard/HistorialesKilometraje/" + id, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            });
+            if (data.visto === false) {
+                //Cambiamos el estado de visto a true
+                data.visto = true;
+                //Actualizamos el historial de kilometraje
+                await fetch(API_URL + "/api/Dashboard/HistorialesKilometraje/" + id, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
 
-            //Actualizamos el estado de la vista
-            getMileageHistory();
+                //Actualizamos el estado de la vista
+                getMileageHistory();
+            }
         }
     }
 

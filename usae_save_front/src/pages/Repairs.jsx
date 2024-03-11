@@ -2,6 +2,7 @@ import "./Repairs.css";
 import { useEffect, useState } from "react"
 import "./Users.css"
 import Swal from "sweetalert2";
+import { API_URL } from "../Api_url";
 
 export const Repairs = () => {
 
@@ -39,7 +40,7 @@ export const Repairs = () => {
 
     const getRepairs = async () => {
         try {
-            const res = await fetch("/api/Reparaciones");
+            const res = await fetch(API_URL + "/api/Reparaciones");
             const data = await res.json();
             if (localStorage.getItem("level") === "2") {
                 setRepairs(data);
@@ -55,7 +56,7 @@ export const Repairs = () => {
 
     const getVehicles = async () => {
         try {
-            const res = await fetch("/api/Vehiculos");
+            const res = await fetch(API_URL + "/api/Vehiculos");
             const data = await res.json();
             if (localStorage.getItem("level") === "2") {
                 setVehicles(data);
@@ -71,7 +72,7 @@ export const Repairs = () => {
 
     const getUsers = async () => {
         try {
-            const res = await fetch("/api/Usuarios");
+            const res = await fetch(API_URL + "/api/Usuarios");
             const data = await res.json();
             setUsers(data);
         } catch (error) {
@@ -101,7 +102,7 @@ export const Repairs = () => {
                 mostrarSweetAlert("Error", "Los siguientes campos estan vacíos: " + campos, "error");
                 return;
             } else {
-                await fetch("/api/Reparaciones", {
+                await fetch(API_URL + "/api/Reparaciones", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -164,7 +165,7 @@ export const Repairs = () => {
                 mostrarSweetAlert("Error", "Los siguientes campos estan vacíos: " + campos, "error");
                 return;
             } else {
-                await fetch(`/api/Reparaciones/${newRepair.id}`, {
+                await fetch(API_URL + `/api/Reparaciones/${newRepair.id}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json"
@@ -215,7 +216,7 @@ export const Repairs = () => {
                 cancelButtonText: "No, cancelar",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    fetch(`/api/Reparaciones/${id}`, {
+                    fetch(API_URL + `/api/Reparaciones/${id}`, {
                         method: "DELETE",
                     }).catch((error) => {
                         console.log(error);
@@ -256,19 +257,21 @@ export const Repairs = () => {
         }
     }
 
-    const changeRepairStatus = async (id) => {
+    const changeRepairStatus = async (reparacion) => {
         try {
-            const res = await fetch(`/api/Reparaciones/${id}`);
-            const data = await res.json();
-            data.estatusReparacion = data.estatusReparacion === 0 ? 1 : 0;
-            await fetch(`/api/Reparaciones/${id}`, {
+
+            if (reparacion.estatusReparacion === 0) {
+                reparacion.estatusReparacion = 1;
+            } else {
+                reparacion.estatusReparacion = 0;
+            }
+
+            await fetch(API_URL + `/api/Reparaciones/${reparacion.id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(data)
-            }).catch((error) => {
-                console.log(error);
+                body: JSON.stringify(reparacion)
             }).then((response) => {
                 if (response.ok === true) {
                     mostrarSweetAlert("Modificación exitosa", "Reparación modificada correctamente", "success");
@@ -278,7 +281,8 @@ export const Repairs = () => {
                     console.log(response);
                     mostrarSweetAlert("Error", "La reparación no se pudo modificar", "error");
                 }
-            });
+            })
+                ;
         } catch (error) {
             console.log(error);
         }
@@ -316,7 +320,7 @@ export const Repairs = () => {
             getRepairs();
         } else {
             try {
-                const res = await fetch(`/api/Reparaciones/Search?id=${idUsuario}&&orden=${orden}`);
+                const res = await fetch(API_URL + `/api/Reparaciones/Search?id=${idUsuario}&&orden=${orden}`);
                 const data = await res.json();
                 setRepairs(data);
             } catch (error) {
@@ -332,13 +336,13 @@ export const Repairs = () => {
         if (orden) {
             if (document.getElementById("buscar").value === "Filtrar por persona") {
                 if (localStorage.getItem("level") === "2") {
-                    let res = await fetch(`/api/Reparaciones/Search?id=${0}&&orden=${orden}`);
+                    let res = await fetch(API_URL + `/api/Reparaciones/Search?id=${0}&&orden=${orden}`);
                     let data = await res.json();
                     setLabelOrder("Reparaciones antiguas");
                     setRepairs(data);
                 } else {
                     let id = localStorage.getItem("id");
-                    let res = await fetch(`/api/Reparaciones/Search?id=${id}&&orden=${orden}`);
+                    let res = await fetch(API_URL + `/api/Reparaciones/Search?id=${id}&&orden=${orden}`);
                     let data = await res.json();
                     setLabelOrder("Reparaciones antiguas");
                     setRepairs(data);
@@ -349,13 +353,13 @@ export const Repairs = () => {
         } else {
             if (document.getElementById("buscar").value === "Filtrar por persona") {
                 if (localStorage.getItem("level") === "2") {
-                    let res = await fetch(`/api/Reparaciones/Search?id=${0}&&orden=${orden}`);
+                    let res = await fetch(API_URL + `/api/Reparaciones/Search?id=${0}&&orden=${orden}`);
                     let data = await res.json();
                     setLabelOrder("Reparaciones recientes");
                     setRepairs(data);
                 } else {
                     let id = localStorage.getItem("id");
-                    let res = await fetch(`/api/Reparaciones/Search?id=${id}&&orden=${orden}`);
+                    let res = await fetch(API_URL + `/api/Reparaciones/Search?id=${id}&&orden=${orden}`);
                     let data = await res.json();
                     setLabelOrder("Reparaciones recientes");
                     setRepairs(data);
@@ -373,7 +377,7 @@ export const Repairs = () => {
             getRepairs();
         } else {
             try {
-                const res = await fetch(`/api/Reparaciones/GetByDate?fecha=${fecha}`);
+                const res = await fetch(API_URL + `/api/Reparaciones/GetByDate?fecha=${fecha}`);
                 const data = await res.json();
                 if (localStorage.getItem("level") === "2") {
                     setRepairs(data);
@@ -408,7 +412,7 @@ export const Repairs = () => {
         setModify(true);
         //Ponemos los datos del usuario en el formulario
         try {
-            const res = await fetch(`/api/Reparaciones/${id}`);
+            const res = await fetch(API_URL + `/api/Reparaciones/${id}`);
             const data = await res.json();
             data.fecha = data.fecha.slice(0, 10);
             if (data.fechaFin !== null) {
@@ -562,14 +566,14 @@ export const Repairs = () => {
                                                 rep.estatusReparacion === 0 ?
                                                     <p>
                                                         <i className="fas fa-times"></i>No
-                                                        <button className="btn btn-secondary ms-1" onClick={() => changeRepairStatus(rep.id)} title="Concluir/Cambiar reparación">
+                                                        <button className="btn btn-secondary ms-1" onClick={() => changeRepairStatus(rep)} title="Concluir/Cambiar reparación">
                                                             <i className="fa-solid fa-arrows-rotate"></i>
                                                         </button>
                                                     </p>
                                                     :
                                                     <p>
                                                         <i className="fas fa-check"></i>Si
-                                                        <button className="btn btn-secondary ms-1" onClick={() => changeRepairStatus(rep.id)} title="Concluir/Cambiar reparación">
+                                                        <button className="btn btn-secondary ms-1" onClick={() => changeRepairStatus(rep)} title="Concluir/Cambiar reparación">
                                                             <i className="fa-solid fa-arrows-rotate"></i>
                                                         </button>
                                                     </p>
@@ -649,7 +653,7 @@ export const Repairs = () => {
                                         </div>
                                         <div className="row">
                                             <div className="col-4">
-                                                <button className="btn btn-secondary w-100 mt-2" onClick={() => changeRepairStatus(rep.id)}>
+                                                <button className="btn btn-secondary w-100 mt-2" onClick={() => changeRepairStatus(rep)}>
                                                     <i className="fa-solid fa-arrows-rotate"> </i>{
                                                         rep.estatusReparacion === 0 ? "Concluir" : "Reabrir"
                                                     }
@@ -712,9 +716,13 @@ export const Repairs = () => {
                                     <select className="form-select" id="id_vehiculo" name="id_vehiculo" value={newRepair.id_vehiculo} onChange={handleInputChange}>
                                         <option value="0">Selecciona un vehiculo</option>
                                         {
-                                            vehicles.map((vehicle) => (
-                                                <option key={vehicle.id} value={vehicle.id}>{vehicle.modelo} - {vehicle.Usuario.nombre} {vehicle.Usuario.apePaterno} {vehicle.Usuario.apeMaterno}</option>
-                                            ))
+                                            vehicles.length > 0 ? (
+                                                vehicles.map((vehicle) => (
+                                                    <option key={vehicle.id} value={vehicle.id}>{vehicle.modelo} - {vehicle.Usuario.nombre} {vehicle.Usuario.apePaterno} {vehicle.Usuario.apeMaterno}</option>
+                                                ))
+                                            ) : (
+                                                <option value="0">No hay vehiculos</option>
+                                            )
                                         }
                                     </select>
                                 </div>

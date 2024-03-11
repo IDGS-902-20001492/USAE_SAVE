@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Histories.css";
 import { Link } from "react-router-dom";
+import { API_URL } from "../Api_url";
 
 const Histories = () => {
 
@@ -8,7 +9,7 @@ const Histories = () => {
     const [searched, setSearched] = useState(false);
 
     const getCars = async () => {
-        const res = await fetch("api/Vehiculos");
+        const res = await fetch(API_URL + "/api/Vehiculos");
         const data = await res.json();
 
         if (localStorage.getItem("level") === "2") {
@@ -30,7 +31,7 @@ const Histories = () => {
             if (nombre === "") {
                 return;
             } else {
-                const res = await fetch(`/api/Vehiculos/Search?query=${nombre}`);
+                const res = await fetch(API_URL + `/api/Vehiculos/Search?query=${nombre}`);
                 const data = await res.json();
                 setCars(data);
                 setSearched(true);

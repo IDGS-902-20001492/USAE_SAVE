@@ -8,14 +8,13 @@ namespace save_apiv0.Models
     public partial class Model1 : DbContext
     {
         public Model1()
-            : base("name=Model1")
+            : base("name=Model11")
         {
         }
 
         public virtual DbSet<Historial> Historial { get; set; }
         public virtual DbSet<HistorialKilometraje> HistorialKilometraje { get; set; }
         public virtual DbSet<ImagenBanner> ImagenBanner { get; set; }
-        public virtual DbSet<Pieza> Pieza { get; set; }
         public virtual DbSet<Reparacion> Reparacion { get; set; }
         public virtual DbSet<Servicio> Servicio { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
@@ -35,21 +34,12 @@ namespace save_apiv0.Models
                 .Property(e => e.imagen)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<Pieza>()
-                .Property(e => e.descripcion)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Pieza>()
-                .HasMany(e => e.Servicio)
-                .WithOptional(e => e.Pieza)
-                .HasForeignKey(e => e.id_pieza);
-
             modelBuilder.Entity<Reparacion>()
                 .Property(e => e.tipoReparacion)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Reparacion>()
-                .Property(e => e.descripcion)
+                .Property(e => e.descripccion)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Reparacion>()
@@ -63,6 +53,10 @@ namespace save_apiv0.Models
             modelBuilder.Entity<Reparacion>()
                 .Property(e => e.presupuesto)
                 .HasPrecision(18, 0);
+
+            modelBuilder.Entity<Reparacion>()
+                .Property(e => e.descripcion)
+                .IsUnicode(false);
 
             modelBuilder.Entity<Reparacion>()
                 .Property(e => e.observaciones)
@@ -199,9 +193,8 @@ namespace save_apiv0.Models
 
             modelBuilder.Entity<Vehiculo>()
                 .HasMany(e => e.Servicio)
-                .WithRequired(e => e.Vehiculo)
-                .HasForeignKey(e => e.id_vehiculo)
-                .WillCascadeOnDelete(false);
+                .WithOptional(e => e.Vehiculo)
+                .HasForeignKey(e => e.id_vehiculo);
         }
     }
 }

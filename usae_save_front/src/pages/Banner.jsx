@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import Swal from "sweetalert2"
+import { API_URL } from "../Api_url"
 
 const Banner = () => {
 
@@ -23,11 +24,11 @@ const Banner = () => {
         try {
 
             //Primero verificamos si la imagen ya existe con el idImg
-            const resExiste = await fetch('api/ImagenBanners/Exists/' + idImg);
+            const resExiste = await fetch(API_URL + '/api/ImagenBanners/Exists/' + idImg);
             const existe = await resExiste.json();
             //Si existe la imagen, la actualizamos
             if (existe) {
-                await fetch('api/ImagenBanners/' + idImg, {
+                await fetch(API_URL + '/api/ImagenBanners/' + idImg, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -38,7 +39,7 @@ const Banner = () => {
                 })
             } else {
                 //Si no existe, la creamos
-                await fetch('api/ImagenBanners', {
+                await fetch(API_URL + '/api/ImagenBanners', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -55,7 +56,7 @@ const Banner = () => {
     }
 
     const getImages = async () => {
-        const res = await fetch('api/ImagenBanners')
+        const res = await fetch(API_URL + '/api/ImagenBanners')
         const data = await res.json()
         setImagenes(data);
     }
@@ -111,7 +112,7 @@ const Banner = () => {
                                     <img src={imagenes[
                                         0].imagen} alt="banner" className="img-fluid mb-3" />
                                 ) : (
-                                    <img src="./img/Banner2.png" alt="banner" className="img-fluid mb-3" />
+                                    <img src="./img/BannerGTOjpg.jpg" alt="banner" className="img-fluid mb-3" />
                                 )
                             }
                             <h4 className="bg-light p-1">Nueva imagen</h4>
@@ -154,7 +155,7 @@ const Banner = () => {
                                     <img src={imagenes[
                                         1].imagen} alt="banner" className="img-fluid mb-3" />
                                 ) : (
-                                    <img src="./img/Banner2.png" alt="banner" className="img-fluid mb-3" />
+                                    <img src="./img/BannerGTOjpg.jpg" alt="banner" className="img-fluid mb-3" />
                                 )
                             }
                             <h4 className="bg-light p-1">Nueva imagen</h4>
@@ -197,7 +198,7 @@ const Banner = () => {
                                     <img src={imagenes[
                                         2].imagen} alt="banner" className="img-fluid mb-3" />
                                 ) : (
-                                    <img src="./img/Banner2.png" alt="banner" className="img-fluid mb-3" />
+                                    <img src="./img/BannerGTOjpg.jpg" alt="banner" className="img-fluid mb-3" />
                                 )
                             }
                             <h4 className="bg-light p-1">Nueva imagen</h4>

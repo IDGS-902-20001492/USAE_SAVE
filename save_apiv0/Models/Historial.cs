@@ -1,5 +1,6 @@
 namespace save_apiv0.Models
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -23,8 +24,10 @@ namespace save_apiv0.Models
 
         public virtual Servicio Servicio { get; set; }
 
+        [JsonIgnore]
         public virtual Usuario Usuario { get; set; }
 
+        [JsonIgnore]
         public virtual Vehiculo Vehiculo { get; set; }
     }
 }

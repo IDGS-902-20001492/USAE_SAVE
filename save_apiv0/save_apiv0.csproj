@@ -226,7 +226,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImagenBannersController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
-    <Compile Include="Controllers\PiezasController.cs" />
     <Compile Include="Controllers\ReparacionesController.cs" />
     <Compile Include="Controllers\ServiciosController.cs" />
     <Compile Include="Controllers\UsuariosController.cs" />
@@ -239,7 +238,6 @@
     <Compile Include="Models\HistorialKilometraje.cs" />
     <Compile Include="Models\ImagenBanner.cs" />
     <Compile Include="Models\Model1.cs" />
-    <Compile Include="Models\Pieza.cs" />
     <Compile Include="Models\Reparacion.cs" />
     <Compile Include="Models\Servicio.cs" />
     <Compile Include="Models\Usuario.cs" />
@@ -291,6 +289,7 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <None Include="Properties\PublishProfiles\usaeSAVE - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />

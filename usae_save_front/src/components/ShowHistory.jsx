@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./ShowHistory.css"
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import { API_URL } from "../Api_url";
 
 const ShowHistory = () => {
 
@@ -16,7 +17,7 @@ const ShowHistory = () => {
 
         const id = window.location.pathname.split("/")[2];
 
-        const res = await fetch(`../api/Historiales/GetByCar/${id}`);
+        const res = await fetch(API_URL + `/api/Historiales/GetByCar/${id}`);
         const data = await res.json();
         setServices(data.servicios);
         setRepairs(data.reparaciones);
@@ -24,7 +25,7 @@ const ShowHistory = () => {
 
     const getCarAttributes = async () => {
         const id = window.location.pathname.split("/")[2];
-        const res = await fetch(`../api/Vehiculos/${id}`);
+        const res = await fetch(API_URL + `/api/Vehiculos/${id}`);
         const data = await res.json();
         setCar(data);
     }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import "./Users.css"
 import Swal from "sweetalert2";
+import { API_URL } from "../Api_url";
 
 export const Users = () => {
 
@@ -34,7 +35,7 @@ export const Users = () => {
 
     const getUsers = async () => {
         try {
-            const res = await fetch("/api/Usuarios");
+            const res = await fetch(API_URL + "/api/Usuarios");
             const data = await res.json();
             setUsers(data);
         } catch (error) {
@@ -59,7 +60,7 @@ export const Users = () => {
 
                 newUser.contrasena = encodePassword(newUser.contrasena);
 
-                await fetch("/api/Usuarios", {
+                await fetch(API_URL + "/api/Usuarios", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -116,7 +117,7 @@ export const Users = () => {
 
                 newUser.contrasena = encodePassword(newUser.contrasena);
 
-                await fetch(`/api/Usuarios/${newUser.id}`, {
+                await fetch(API_URL + `/api/Usuarios/${newUser.id}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json"
@@ -170,7 +171,7 @@ export const Users = () => {
                 cancelButtonText: "No, cancelar",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    fetch(`/api/Usuarios/${id}`, {
+                    fetch(API_URL + `/api/Usuarios/${id}`, {
                         method: "DELETE",
                     }).catch((error) => {
                         console.log(error);
@@ -219,7 +220,7 @@ export const Users = () => {
         const nombre = document.getElementById("buscar").value;
 
         try {
-            const res = await fetch(`/api/Usuarios/Search?query=${nombre}`);
+            const res = await fetch(API_URL + `/api/Usuarios/Search?query=${nombre}`);
             const data = await res.json();
             setUsers(data);
             setSearch(true);
@@ -276,7 +277,7 @@ export const Users = () => {
         setModify(true);
         //Ponemos los datos del usuario en el formulario
         try {
-            const res = await fetch(`/api/Usuarios/${id}`);
+            const res = await fetch(API_URL + `/api/Usuarios/${id}`);
             const data = await res.json();
             if (data.permiso === 2) {
                 data.permiso = true;

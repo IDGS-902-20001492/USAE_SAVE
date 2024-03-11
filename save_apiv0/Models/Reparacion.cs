@@ -27,7 +27,7 @@ namespace save_apiv0.Models
         public string tipoReparacion { get; set; }
 
         [StringLength(255)]
-        public string descripcion { get; set; }
+        public string descripccion { get; set; }
 
         public string ubicacionReparacion { get; set; }
 
@@ -35,6 +35,8 @@ namespace save_apiv0.Models
         public string nombreMecanico { get; set; }
 
         public decimal? presupuesto { get; set; }
+
+        public string descripcion { get; set; }
 
         [StringLength(255)]
         public string observaciones { get; set; }
@@ -45,7 +47,6 @@ namespace save_apiv0.Models
 
         public int? estatusReparacion { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [JsonIgnore]
         public virtual ICollection<Historial> Historial { get; set; }
 

@@ -31,22 +31,18 @@ namespace save_apiv0.Models
         [StringLength(255)]
         public string mecanico { get; set; }
 
-        public int? id_pieza { get; set; }
+        public int? id_vehiculo { get; set; }
 
         public bool? estatus { get; set; }
+
+        public bool? estatusServicio { get; set; }
 
         public string descripcion { get; set; }
 
         public decimal? presupuesto { get; set; }
 
-        public int id_vehiculo { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [JsonIgnore]
         public virtual ICollection<Historial> Historial { get; set; }
-
-        [JsonIgnore]
-        public virtual Pieza Pieza { get; set; }
 
         public virtual Vehiculo Vehiculo { get; set; }
     }

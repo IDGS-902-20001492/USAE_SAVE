@@ -1,13 +1,14 @@
 import { Carousel } from "react-bootstrap";
 import "./Home.css";
 import { useEffect, useState } from "react";
+import { API_URL } from "../Api_url";
 
 export const Home = () => {
 
     const [imagenes, setImagenes] = useState([])
 
     const getImagenes = async () => {
-        const res = await fetch('api/ImagenBanners')
+        const res = await fetch(API_URL + '/api/ImagenBanners')
         const data = await res.json()
         setImagenes(data)
     };
