@@ -44,7 +44,15 @@ const Vehicles = () => {
                 setAllCarts(data);
             } else {
                 let cars = data.filter((car) => car.id_usuario === parseInt(localStorage.getItem("id")));
-                setAllCarts(cars);
+
+                //Si el usuario no tiene vehiculos asignados, buscamos si tiene vehiculos compartidos
+                if (cars.length === 0) {
+                    //Hacemos una busqueda tipo like para encontrar los vehiculos compartidos
+                    let carsShared = data.filter((car) => car.comparteCon === localStorage.getItem("fullname"));
+                    setAllCarts(carsShared);
+                } else {
+                    setAllCarts(cars);
+                }
             }
 
 
